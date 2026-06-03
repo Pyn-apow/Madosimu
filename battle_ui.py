@@ -20,7 +20,6 @@ def calculate_damage(ability_multiplier,base_atk,total_atk,total_def,dmg_dealt,d
 
 def get_all_buff_debuffs(chara: dict) -> list:
     all_bd = []
-
     # ultimate
     for ult in chara.get("ultimate", []):
         all_bd.extend(ult.get("meta", {}).get("buff_debuffs", []))
@@ -32,6 +31,8 @@ def get_all_buff_debuffs(chara: dict) -> list:
     # abilities（metaがなく直接buff_debuffsを持つ）
     for ability in chara.get("abilities", []):
         all_bd.extend(ability.get("buff_debuffs", []))
+
+    all_bd = [bd for bd in all_bd if totsu[e] >= bd.get("totsu", 0)]
 
     return all_bd
 
@@ -47,6 +48,7 @@ bd1 = st.selectbox("バッファー・デバッファーを選択", ["なし"] +
 bd2 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd2")
 bd3 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd3")
 bd4 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd4")
+totsu = [st.selectbox("限界突破数を選択", [0,1,2,3,4,5]),st.selectbox("限界突破数を選択", [0,1,2,3,4,5]),st.selectbox("限界突破数を選択", [0,1,2,3,4,5]),st.selectbox("限界突破数を選択", [0,1,2,3,4,5]),st.selectbox("限界突破数を選択", [0,1,2,3,4,5])]
 BREAK = st.slider("敵のブレイクボーナス（魔法少女同士の比較には影響しません）", min_value=100, max_value=999, value=200)
 DEFENCE = st.number_input("敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0)
 
@@ -58,7 +60,7 @@ chara4 = roster.get(bd3) if bd3 != "なし" else None
 chara5 = roster.get(bd4) if bd4 != "なし" else None
 
 all_bd = []
-for i in [chara1,chara2,chara3,chara4,chara5]:
+for e,i in enumerate([chara1,chara2,chara3,chara4,chara5]):
     all_bd += get_all_buff_debuffs(i) if i is not None else []
 st.write(all_bd)
 atk_buff_value = 0

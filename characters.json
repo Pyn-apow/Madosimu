@@ -64,6 +64,20 @@
                     "type": "atk",
                     "amount": 0.3,
                     "duration": -1
+                    },
+                    {
+                    "target": "味方",
+                    "type": "atk",
+                    "amount": 0.1,
+                    "duration": 2,
+                    "totsu":2
+                    },
+                    {
+                    "target": "味方",
+                    "type": "speed",
+                    "amount": 0.1,
+                    "duration": 2,
+                    "totsu":2
                     }
                 ]
         }
