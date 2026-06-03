@@ -285,6 +285,16 @@ with tab2:
         col_a.metric("期待値", f"{result['expected']:,.0f}")
         col_b.metric("理論値", f"{result['theory']:,.0f}")
         st.divider()
+    st.subheader("キャラクター別最高ダメージ")
+    for atk_name in registered_attackers:
+        chara_results = [r for r in results if r["label"].startswith(atk_name)]
+        if chara_results:
+            best = max(chara_results, key=lambda x: x["expected"] if sort_by == "期待値" else x["theory"])
+            with st.expander(atk_name):
+                st.write(f"**ビルド:** {best['label']}")
+                col_a, col_b = st.columns(2)
+                col_a.metric("期待値", f"{best['expected']:,.0f}")
+                col_b.metric("理論値", f"{best['theory']:,.0f}")
 
 with tab3:
     st.header("セーブ・ロード")
