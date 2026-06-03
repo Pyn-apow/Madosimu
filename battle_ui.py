@@ -81,11 +81,14 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
         crit_rate += bd["amount"]
 
     dmg_dealt = 0
-    for bd in [i for i in all_bd if i["type"] == "dmg_dealt"]:
+    for bd in [i for i in all_bd if i["type"] == "dmg_dealt" and not bd.get("condition")]:
         if "other" in bd and bd["other"] == "more":
             dmg_dealt += bd["amount"] * enemy_number
         else:
             dmg_dealt += bd["amount"]
+
+    dmg_dealt_boss = dmg_dealt + sum(bd["amount"] for bd in all_bd if bd["type"] == "dmg_dealt" and bd.get("condition") == "break_200" and boss_break >= 200)
+    dmg_dealt_enemy = dmg_dealt + sum(bd["amount"] for bd in all_bd if bd["type"] == "dmg_dealt" and bd.get("condition") == "break_200" and enemy_break >= 200)
 
     dmg_taken = 0
     for bd in [i for i in all_bd if i["type"] == "dmg_taken"]:
@@ -114,14 +117,13 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
     else:
         target_number = min(attacker["ultimate"][0]["meta"].get("target", 1), enemy_number)
 
-    boss_dmg = calculate_damage(ult_multiplier + extra_multiplier, base_atk_total, total_atk, boss_defence * def_debuff_value, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, boss_break)
+    boss_dmg = calculate_damage(ult_multiplier + extra_multiplier, base_atk_total, total_atk, boss_defence * def_debuff_value, dmg_dealt_boss, dmg_taken, ele_res, ele_advantage_dmg, boss_break)
 
     if other == "less":
-        enemy_dmg = calculate_damage(extra_multiplier, base_atk_total, total_atk, enemy_defence * def_debuff_value, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, enemy_break)
+        enemy_dmg = calculate_damage(extra_multiplier, base_atk_total, total_atk, enemy_defence * def_debuff_value, dmg_dealt_enemy, dmg_taken, ele_res, ele_advantage_dmg, enemy_break)
     else:
-        enemy_dmg = calculate_damage(ult_multiplier + extra_multiplier, base_atk_total, total_atk, enemy_defence * def_debuff_value, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, enemy_break)
+        enemy_dmg = calculate_damage(ult_multiplier + extra_multiplier, base_atk_total, total_atk, enemy_defence * def_debuff_value, dmg_dealt_enemy, dmg_taken, ele_res, ele_advantage_dmg, enemy_break)
 
-    target_number = min(attacker["ultimate"][0]["meta"].get("target", 1), enemy_number)
     expected = boss_dmg * (crit_dmg * crit_rate + (1 - crit_rate)) + enemy_dmg * (crit_dmg * crit_rate + (1 - crit_rate)) * (target_number - 1)
     theory = boss_dmg * crit_dmg + enemy_dmg * crit_dmg * (target_number - 1)
 
