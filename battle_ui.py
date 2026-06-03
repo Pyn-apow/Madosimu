@@ -261,3 +261,32 @@ with tab2:
         col_a.metric("期待値", f"{result['expected']:,.0f}")
         col_b.metric("理論値", f"{result['theory']:,.0f}")
         st.divider()
+
+import base64
+
+st.divider()
+st.subheader("セーブ・ロード")
+
+if st.button("セーブデータを表示"):
+    save_data = json.dumps(
+        {n: {"base_atk": v.get("base_atk"), "totsu": v["totsu"]} for n, v in st.session_state.registered.items()},
+        ensure_ascii=False, separators=(',', ':')
+    )
+    compressed = base64.b64encode(save_data.encode()).decode()
+    st.text_area("セーブデータ（コピーして保存）", value=compressed, height=68)
+
+load_input = st.text_area("ロードデータ（ペーストしてロード）", height=68, key="load_input")
+if st.button("ロードする"):
+    try:
+        decoded = base64.b64decode(load_input.encode()).decode()
+        loaded = json.loads(decoded)
+        for name, data in loaded.items():
+            if name in roster:
+                role = roster[name].get("role")
+                st.session_state.registered[name] = {"totsu": data["totsu"], "role": role}
+                if role == "attacker":
+                    st.session_state.registered[name]["base_atk"] = data.get("base_atk", 0)
+        st.success("ロードしました！")
+        st.rerun()
+    except:
+        st.error("データが正しくありません。")
