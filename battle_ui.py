@@ -18,7 +18,7 @@ def calculate_damage(ability_multiplier,base_atk,total_atk,total_def,dmg_dealt,d
     Break_Factor = BREAK/100
     return Ability_Damage_Base * Defense_Factor * Damage_Dealt_Factor * Damage_Taken_Factor * Elemental_Resistance_Factor * Effective_Element_Factor * Break_Factor
 
-def get_all_buff_debuffs(chara: dict) -> list:
+def get_all_buff_debuffs(chara: dict,totsu) -> list:
     all_bd = []
     # ultimate
     for ult in chara.get("ultimate", []):
@@ -32,7 +32,7 @@ def get_all_buff_debuffs(chara: dict) -> list:
     for ability in chara.get("abilities", []):
         all_bd.extend(ability.get("buff_debuffs", []))
 
-    all_bd = [bd for bd in all_bd if totsu[e] >= bd.get("totsu", 0)]
+    all_bd = [bd for bd in all_bd if totsu >= bd.get("totsu", 0)]
 
     return all_bd
 
