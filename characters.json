@@ -1,7 +1,7 @@
 [
   {
     "name": "水着さやか",
-    "atk": 2572.0,
+    "role":"attacker",
     "speed": 116.0,
     "ultimate": [
         {
@@ -54,17 +54,16 @@
         {
         "buff_debuffs": [
                     {
-                    "target": "味方単体",
-                    "type": "与ダメージ",
+                    "target": "味方",
+                    "type": "dmg_dealt",
                     "amount": 0.3,
                     "duration": "水刃"
                     },
                     {
-                    "target": "味方単体",
-                    "type": "攻撃力",
-                    "amount": 0.02,
-                    "duration": -1,
-                    "other":"amount*magic"
+                    "target": "味方",
+                    "type": "atk",
+                    "amount": 0.3,
+                    "duration": -1
                     }
                 ]
         }
