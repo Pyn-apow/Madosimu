@@ -126,7 +126,7 @@ ele_res = 1
 
 skill_damage = calculate_damage(chara1["battle_skills"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
 ult_damage = calculate_damage(chara1["ultimate"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
-
+st.write((chara1["battle_skills"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg))
 sum_damage = 0
 mp = 0
 skill_dmg_crit = skill_damage * crit_dmg 
