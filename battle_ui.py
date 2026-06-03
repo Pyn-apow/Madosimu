@@ -82,7 +82,7 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
         crit_rate += bd["amount"]
 
     dmg_dealt = 0
-    for bd in [i for i in all_bd if i["type"] == "dmg_dealt" and not bd.get("condition")]:
+    for bd in [i for i in all_bd if i["type"] == "dmg_dealt" and not i.get("condition")]:
         if "other" in bd and bd["other"] == "more":
             dmg_dealt += bd["amount"] * enemy_number
         else:
