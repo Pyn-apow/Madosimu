@@ -20,7 +20,7 @@
                     {
                     "target": "敵全体",
                     "type": "def",
-                    "amount": -0.3,
+                    "amount": 0.3,
                     "duration": 2
                     }
                 ]
