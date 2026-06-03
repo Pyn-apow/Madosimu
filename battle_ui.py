@@ -16,7 +16,17 @@ def load_weapons(filepath: str) -> list:
     with open(filepath, "r", encoding="utf-8") as f:
         return json.load(f)
 
+BUFF_TYPES = {"atk", "crit_rate", "crit_dmg", "dmg_dealt", "ele_advantage_dmg", "dmg_taken"}
+DEBUFF_TYPES = {"def"}
+
 def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
+    role = chara.get("role")
+    multiplier = 1.0
+    if role == "buffer" and totsu >= 4:
+        multiplier = 1.5
+    elif role == "debuffer" and totsu >= 4:
+        multiplier = 1.3
+
     all_bd = []
     for ult in chara.get("ultimate", []):
         all_bd.extend(ult.get("meta", {}).get("buff_debuffs", []))
@@ -24,7 +34,16 @@ def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
         all_bd.extend(skill.get("meta", {}).get("buff_debuffs", []))
     for ability in chara.get("abilities", []):
         all_bd.extend(ability.get("buff_debuffs", []))
-    return [bd for bd in all_bd if totsu >= bd.get("totsu", 0)]
+
+    result = []
+    for bd in all_bd:
+        if totsu < bd.get("totsu", 0):
+            continue
+        if multiplier != 1.0:
+            bd = dict(bd)
+            bd["amount"] = bd["amount"] * multiplier
+        result.append(bd)
+    return result
 
 def get_support_ability_bds(chara: dict, attacker_element: str, attacker_role: str) -> list:
     all_bd = []
