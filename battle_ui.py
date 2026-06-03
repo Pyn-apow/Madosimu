@@ -47,8 +47,8 @@ bd1 = st.selectbox("バッファー・デバッファーを選択", ["なし"] +
 bd2 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd2")
 bd3 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd3")
 bd4 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd4")
-BREAK = st.slider("敵のブレイクボーナス（魔法少女同士の比較には影響しません）", min_value=100.0, max_value=999.0, value=1.0)
-DEFENCE = st.number_input("敵の防御力", min_value=0, max_value=10000, value=1.0)
+BREAK = st.slider("敵のブレイクボーナス（魔法少女同士の比較には影響しません）", min_value=100, max_value=999, value=1)
+DEFENCE = st.number_input("敵の防御力", min_value=0.0, max_value=100000.0, value=1.0)
 
 # 選択されたキャラのデータを取得
 chara1 = roster[attacker]
@@ -113,8 +113,8 @@ for i in ele_advantage_dmg_buff:
 
 ability_flower = {"atk":st.number_input("能力晶花のサブステータスによる攻撃力（実数値）", min_value=0, max_value=180, value=1),
                   "spd":st.number_input("能力晶花のサブステータスによるスピード（実数値）", min_value=0, max_value=12, value=1),
-                  "crit_dmg":st.number_input("能力晶花のサブステータスによるクリティカルダメージ（％）", min_value=0, max_value=30, value=0.1),
-                  "crit_rate":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0, max_value=15, value=0.1)}
+                  "crit_dmg":st.number_input("能力晶花のサブステータスによるクリティカルダメージ（％）", min_value=0.0, max_value=30.0, value=0.1),
+                  "crit_rate":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0.0, max_value=15.0, value=0.1)}
 crit_dmg += ability_flower["crit_dmg"]
 crit_rate += ability_flower["crit_rate"]
 
