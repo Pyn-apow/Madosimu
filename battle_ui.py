@@ -135,12 +135,12 @@ with tab2:
     max_supporters = col2.radio("バッファー・デバッファーの人数", [0, 1, 2, 3, 4], horizontal=True)
 
     col3, col4 = st.columns(2)
-    boss_break = col3.slider("ボスのブレイクボーナス", min_value=100, max_value=999, value=200)
+    boss_break = col3.number_input("ボスのブレイクボーナス", min_value=100, max_value=999, value=200)
     boss_defence = col4.number_input("ボスの防御力", min_value=0.0, max_value=100000.0, value=1000.0)
 
     if enemy_number > 1:
         col5, col6 = st.columns(2)
-        enemy_break = col5.slider("他の敵のブレイクボーナス", min_value=100, max_value=999, value=200)
+        enemy_break = col5.number_input("他の敵のブレイクボーナス", min_value=100, max_value=999, value=200)
         enemy_defence = col6.number_input("他の敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0)
     else:
         enemy_break = 0
@@ -184,12 +184,3 @@ with tab2:
         col_a.metric("期待値", f"{result['expected']:,.0f}")
         col_b.metric("理論値", f"{result['theory']:,.0f}")
         st.divider()
-
-    if results:
-        import pandas as pd
-        chart_data = pd.DataFrame({
-            "組み合わせ": [r["label"] for r in top3],
-            "期待値": [r["expected"] for r in top3],
-            "理論値": [r["theory"] for r in top3],
-        }).set_index("組み合わせ")
-        st.bar_chart(chart_data)
