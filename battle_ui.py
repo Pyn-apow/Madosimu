@@ -174,7 +174,6 @@ with tab2:
 
     if not registered_attackers:
         st.warning("タブ①でアタッカーを登録してください。")
-        st.stop()
 
     st.subheader("敵の設定")
     col1, col2 = st.columns(2)
