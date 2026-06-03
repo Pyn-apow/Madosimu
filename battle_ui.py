@@ -62,7 +62,8 @@ if ENEMY_NUMBER != 1:
     ENEMY_BREAK = st.slider("ほかの敵のブレイクボーナス", min_value=100, max_value=999, value=200)
     ENEMY_DEFENCE = st.number_input("ほかの敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0)
 else:
-    pass
+    ENEMY_BREAK = 0
+    ENEMY_DEFENCE = 0
 
 # 選択されたキャラのデータを取得
 chara1 = roster[attacker]
