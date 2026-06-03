@@ -9,7 +9,7 @@ def load_characters(filepath: str) -> dict:
     return {c["name"]: c for c in data}
 
 def calculate_damage(ability_multiplier,base_atk,total_atk,total_def,dmg_dealt,dmg_taken,ele_res, ele_advantage_dmg):
-    Ability_Damage_Base = ability_multiplier * base_atk * ((base_atk / 124) ^ 1.2 + 12) / 20
+    Ability_Damage_Base = ability_multiplier * base_atk * ((base_atk / 124) ** 1.2 + 12) / 20
     Defense_Factor = min((total_atk + 10) / (total_def + 10) * 0.12,2)
     Damage_Dealt_Factor = 1 + dmg_dealt
     Damage_Taken_Factor = 1 + dmg_taken
@@ -43,19 +43,19 @@ roster = load_characters("characters.json")
 
 # セレクトボックスでキャラ選択
 attacker = st.selectbox("メインアタッカーを選択", [name for name, c in roster.items() if c.get("role") == "attacker"])
-bd1 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"])
-bd2 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"])
-bd3 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"])
-bd4 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"])
+bd1 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd1")
+bd2 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd2")
+bd3 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd3")
+bd4 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd4")
 BREAK = st.slider("敵のブレイクボーナス（魔法少女同士の比較には影響しません）", min_value=100.0, max_value=999.0, value=1.0)
 DEFENCE = st.number_input("敵の防御力", min_value=0, max_value=10000, value=1.0)
 
 # 選択されたキャラのデータを取得
 chara1 = roster[attacker]
-chara2 = roster[bd1] if bd1 != ["なし"] else None
-chara3 = roster[bd2] if bd2 != ["なし"] else None
-chara4 = roster[bd3] if bd3 != ["なし"] else None
-chara5 = roster[bd4] if bd4 != ["なし"] else None
+chara2 = roster.get(bd1) if bd1 != "なし" else None
+chara3 = roster.get(bd2) if bd2 != "なし" else None
+chara4 = roster.get(bd3) if bd3 != "なし" else None
+chara5 = roster.get(bd4) if bd4 != "なし" else None
 
 all_bd = []
 for i in [chara1,chara2,chara3,chara4,chara5]:
@@ -114,7 +114,9 @@ for i in ele_advantage_dmg_buff:
 ability_flower = {"atk":st.number_input("能力晶花のサブステータスによる攻撃力（実数値）", min_value=0, max_value=180, value=1),
                   "spd":st.number_input("能力晶花のサブステータスによるスピード（実数値）", min_value=0, max_value=12, value=1),
                   "crit_dmg":st.number_input("能力晶花のサブステータスによるクリティカルダメージ（％）", min_value=0, max_value=30, value=0.1),
-                  "spd":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0, max_value=15, value=0.1)}
+                  "crit_rate":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0, max_value=15, value=0.1)}
+crit_dmg += ability_flower["crit_dmg"]
+crit_rate += ability_flower["crit_rate"]
 
 total_spd = chara1["speed"] * speed_buff_value + ability_flower["spd"]
 base_atk = st.number_input("基礎攻撃力＝（魔法少女＋ポートレイト＋サポートキオク）の基礎攻撃力", min_value=0, max_value=9999, value=1)
@@ -122,8 +124,8 @@ total_atk = base_atk * (1 + atk_buff_value) + ability_flower["atk"]
 total_def = DEFENCE * def_debuff_value
 ele_res = 1
 
-skill_damage = calculate_damage(chara1["battle_skills"]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
-ult_damage = calculate_damage(chara1["ultimate"]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
+skill_damage = calculate_damage(chara1["battle_skills"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
+ult_damage = calculate_damage(chara1["ultimate"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
 
 sum_damage = 0
 mp = 0
