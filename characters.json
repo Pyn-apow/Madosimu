@@ -3,7 +3,7 @@
     "name": "アルティメットまどか", "role": "attacker", "element": "light",
     "ultimate": [{"meta": {"cost_mp": 100,
       "hits": [
-        {"power": 5.0, "target": 1},
+        {"power": [3.45,3.45,3.45,3.92,3.92,5.0], "target": 1},
         {"power": 0.2, "target": -1, "scale": "less"}
       ],
       "buff_debuffs": [
@@ -27,7 +27,7 @@
     "name": "悪魔ほむら", "role": "attacker", "element": "dark",
     "ultimate": [{"meta": {"cost_mp": 90,
       "hits": [
-        {"power": 2.6, "target": -1},
+        {"power": [1.5,1.5,1.5,2.0,2.0,2.6], "target": -1},
         {"power": 1.0, "target": -1, "scale": "random"}
       ]
     }}],
@@ -52,8 +52,8 @@
     "name": "ホーリーマミ", "role": "attacker", "element": "dark",
     "ultimate": [{"meta": {"cost_mp": 90,
       "hits": [
-        {"power": 2.6, "target": -1},
-        {"power": 2.6, "target": -1, "scale": "random"}
+        {"power": [1.5,1.5,1.5,2.0,2.0,2.6], "target": -1},
+        {"power": [1.5,1.5,1.5,2.0,2.0,2.6], "target": -1, "scale": "random"}
       ]
     }}],
     "battle_skills": [{"meta": {"buff_debuffs": [
@@ -97,8 +97,8 @@
     "name": "美国織莉子", "role": "attacker", "element": "light",
     "ultimate": [{"meta": {"cost_mp": 100,
       "hits": [
-        {"power": 3.2, "target": -1},
-        {"power": 0.32, "target": -1, "scale": "less"}
+        {"power": [1.82,1.82,1.82,2.24,2.24,3.2], "target": -1},
+        {"power": [0.182,0.182,0.182,0.224,0.224,0.32], "target": -1, "scale": "less"}
       ]
     }}],
     "battle_skills": [{"meta": {"buff_debuffs": []}}],

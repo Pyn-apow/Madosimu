@@ -93,9 +93,11 @@ def calculate_damage(multiplier, base_atk, total_atk, total_def, dmg_dealt, dmg_
             * (1.2 + ele_advantage_dmg)
             * (break_value / 100))
 
-def compute_hit_damage(hit, base_atk, total_atk, buffs, enemy_number, boss_defence, enemy_defence, boss_break, enemy_break):
+def compute_hit_damage(hit, base_atk, total_atk, buffs, enemy_number, boss_defence, enemy_defence, boss_break, enemy_break,attacker_totsu=0):
     scale = hit.get("scale")
     power = hit["power"]
+    if isinstance(power, list):
+        power = power[attacker_totsu]
     raw_target = hit["target"]
     target = enemy_number if raw_target == -1 else min(raw_target, enemy_number)
 
@@ -157,7 +159,7 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
     for hit in hits:
         boss_dmg, enemy_dmg, target = compute_hit_damage(
             hit, base_atk, total_atk, buffs,
-            enemy_number, boss_defence, enemy_defence, boss_break, enemy_break
+            enemy_number, boss_defence, enemy_defence, boss_break, enemy_break,attacker_totsu
         )
         total_expected += boss_dmg * crit_factor + enemy_dmg * crit_factor * (target - 1)
         total_theory += boss_dmg * crit_dmg + enemy_dmg * crit_dmg * (target - 1)
