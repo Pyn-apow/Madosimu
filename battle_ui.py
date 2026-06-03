@@ -63,7 +63,7 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
 
     atk_buff_value = 0
     for bd in [i for i in all_bd if i["type"] == "atk"]:
-        if "other" in bd and bd["other"] == "enemy_number":
+        if "other" in bd and bd["other"] == "more":
             atk_buff_value += bd["amount"] * enemy_number
         else:
             atk_buff_value += bd["amount"]
@@ -82,7 +82,10 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
 
     dmg_dealt = 0
     for bd in [i for i in all_bd if i["type"] == "dmg_dealt"]:
-        dmg_dealt += bd["amount"]
+        if "other" in bd and bd["other"] == "more":
+            dmg_dealt += bd["amount"] * enemy_number
+        else:
+            dmg_dealt += bd["amount"]
 
     dmg_taken = 0
     for bd in [i for i in all_bd if i["type"] == "dmg_taken"]:
