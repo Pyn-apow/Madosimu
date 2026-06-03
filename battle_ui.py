@@ -174,7 +174,6 @@ with tab2:
             combo_label = atk_name + " + " + "、".join(combo) if combo else atk_name + "（サポートなし）"
             results.append({"label": combo_label, "expected": expected, "theory": theory})
 
-    results.sort(key=lambda x: x["期待値" if sort_by == "期待値" else "theory"], reverse=True)
     results.sort(key=lambda x: x["expected"] if sort_by == "期待値" else x["theory"], reverse=True)
     top3 = results[:3]
 
