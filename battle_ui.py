@@ -133,7 +133,7 @@ skill_dmg_crit = skill_damage * crit_dmg
 skill_dmg_noncrit = skill_damage 
 ult_dmg_crit = ult_damage * crit_dmg 
 ult_dmg_noncrit = ult_damage 
-for _ in range(total_spd):
+for _ in range(int(total_spd)):
     sum_damage += skill_dmg_crit * crit_rate + skill_dmg_noncrit * (1-crit_rate)
     mp += 30 * mp_buff_value
     if mp >= chara1["ultimate"]["meta"]["cost_mp"]:
