@@ -145,8 +145,8 @@ if chara1["ultimate"][0]["meta"]["other"] == "random":
 
 boss_ult_damage = calculate_damage(ult_multiplier,base_atk,total_atk,BOSS_DEFENCE * def_debuff_value,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg,BOSS_BREAK)
 st.write((ult_multiplier,base_atk,total_atk,BOSS_DEFENCE * def_debuff_value,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg,BOSS_BREAK))
+enemy_ult_damage = calculate_damage(ult_multiplier,base_atk,total_atk,ENEMY_DEFENCE * def_debuff_value,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg,ENEMY_BREAK)
 if ENEMY_NUMBER != 1:
-    enemy_ult_damage = calculate_damage(ult_multiplier,base_atk,total_atk,ENEMY_DEFENCE * def_debuff_value,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg,ENEMY_BREAK)
     st.write((ult_multiplier,base_atk,total_atk,ENEMY_DEFENCE * def_debuff_value,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg,ENEMY_BREAK))
 # sum_damage = 0
 # mp = 0
