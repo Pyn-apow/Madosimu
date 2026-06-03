@@ -73,12 +73,12 @@ def_debuff = [i for i in all_bd if i["type"] == "def"]
 for i in def_debuff:
         def_debuff_value *= 1-i["amount"]
 
-crit_dmg = 1.1
+crit_dmg = 1.2
 crit_dmg_buff = [i for i in all_bd if i["type"] == "crit_dmg"]
 for i in crit_dmg_buff:
         crit_dmg += i["amount"]
 
-crit_rate = 0.05
+crit_rate = 0.1
 crit_rate_buff = [i for i in all_bd if i["type"] == "crit_rate"]
 for i in crit_rate_buff:
         crit_rate += i["amount"]
