@@ -138,6 +138,30 @@ supporter_list = [name for name, c in roster.items() if c.get("role") in ("buffe
 if "registered" not in st.session_state:
     st.session_state.registered = {}
 
+load_input = st.text_area("ロードデータ（ペーストしてロード）", height=68, key="load_input")
+if st.button("ロードする"):
+    try:
+        decoded = base64.b64decode(load_input.strip().encode()).decode()
+        loaded = json.loads(decoded)
+        st.session_state["pending_load"] = loaded
+        st.rerun()
+    except Exception as e:
+        st.error(f"データが正しくありません。{e}")
+
+if "pending_load" in st.session_state:
+    loaded = st.session_state.pop("pending_load")
+    for name, data in loaded.items():
+        if name in roster:
+            role = roster[name].get("role")
+            st.session_state.registered[name] = {"totsu": data["totsu"], "role": role}
+            if role == "attacker":
+                st.session_state.registered[name]["base_atk"] = data.get("base_atk", 0)
+            st.session_state[f"own_{name}"] = True
+            st.session_state[f"totsu_{name}"] = data["totsu"]
+            if role == "attacker":
+                st.session_state[f"atk_{name}"] = data.get("base_atk", 0)
+    st.success("ロードしました！")
+
 tab1, tab2, tab3 = st.tabs(["魔法少女登録", "ダメージシミュレーター", "セーブ・ロード"])
 
 with tab1:
@@ -272,23 +296,3 @@ with tab3:
         )
         compressed = base64.b64encode(save_data.encode()).decode()
         st.text_area("セーブデータ（コピーして保存）", value=compressed, height=68)
-
-    load_input = st.text_area("ロードデータ（ペーストしてロード）", height=68, key="load_input")
-    if st.button("ロードする"):
-        try:
-            decoded = base64.b64decode(load_input.strip().encode()).decode()
-            loaded = json.loads(decoded)
-            for name, data in loaded.items():
-                if name in roster:
-                    role = roster[name].get("role")
-                    st.session_state.registered[name] = {"totsu": data["totsu"], "role": role}
-                    if role == "attacker":
-                        st.session_state.registered[name]["base_atk"] = data.get("base_atk", 0)
-                    st.session_state[f"own_{name}"] = True
-                    st.session_state[f"totsu_{name}"] = data["totsu"]
-                    if role == "attacker":
-                        st.session_state[f"atk_{name}"] = data.get("base_atk", 0)
-            st.success("ロードしました！")
-            st.rerun()
-        except Exception as e:
-            st.error(f"データが正しくありません。{e}")
