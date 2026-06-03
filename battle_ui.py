@@ -208,11 +208,11 @@ with tab2:
     boss_break = col3.number_input("ボスのブレイクボーナス", min_value=100, max_value=999, value=200)
     boss_defence = col4.number_input("ボスの防御力", min_value=0.0, max_value=100000.0, value=1000.0)
 
-    if enemy_number > 1:
-        col5, col6 = st.columns(2)
-        enemy_break = col5.number_input("他の敵のブレイクボーナス", min_value=100, max_value=999, value=200)
-        enemy_defence = col6.number_input("他の敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0)
-    else:
+    col5, col6 = st.columns(2)
+    enemy_break = col5.number_input("他の敵のブレイクボーナス", min_value=100, max_value=999, value=200, disabled=enemy_number == 1)
+    enemy_defence = col6.number_input("他の敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0, disabled=enemy_number == 1)
+
+    if enemy_number == 1:
         enemy_break = 0
         enemy_defence = 0.0
 
