@@ -1,4 +1,82 @@
 [
+    {
+    "name": "アルティメットまどか",
+    "role":"attacker",
+    "element":"light",
+    "ultimate": [
+        {
+        "power": 5,
+        "attack_number":1,
+        "meta": {
+            "target": 1,
+            "cost_mp": 100,
+            "other" : "less",
+            "power" : 0.2,
+            "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "crit_dmg",
+                    "amount": 0.4
+                    }
+                ]
+            }
+        }
+    ],
+    "battle_skills": [
+        {
+        "meta": {
+            "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.15
+                    },
+                    {
+                    "target": 1,
+                    "type": "dmg_dealt",
+                    "amount": 0.3
+                    }
+                ]
+            }
+        }
+    ]
+    ,
+    "abilities": [
+        {
+        "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.25
+                    },
+                    {
+                    "target": 1,
+                    "type": "crit_rate",
+                    "amount": 0.25
+                    },
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.2,
+                    "totsu" : 1
+                    }
+                ]
+        }
+    ],
+    "support_abilities": [
+        {
+        "condition" : "attacker",
+        "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.2
+                    }
+                ]
+        }
+    ],
+    "metadata": {}
+  },
   {
     "name": "悪魔ほむら",
     "role":"attacker",

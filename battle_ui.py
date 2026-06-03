@@ -98,11 +98,25 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
     ele_res = 0
 
     ult_multiplier = attacker["ultimate"][0]["power"]
-    if attacker["ultimate"][0]["meta"].get("other") == "random":
-        ult_multiplier += attacker["ultimate"][0]["meta"]["power"] / enemy_number
+    extra_multiplier = 0
+    other = attacker["ultimate"][0]["meta"].get("other")
 
-    boss_dmg = calculate_damage(ult_multiplier, base_atk_total, total_atk, boss_defence * def_debuff_value, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, boss_break)
-    enemy_dmg = calculate_damage(ult_multiplier, base_atk_total, total_atk, enemy_defence * def_debuff_value, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, enemy_break)
+    if other == "random":
+        extra_multiplier = attacker["ultimate"][0]["meta"]["power"] / enemy_number
+    elif other == "less":
+        extra_multiplier = attacker["ultimate"][0]["meta"]["power"] * (5 - enemy_number)
+
+    if other == "less":
+        target_number = enemy_number
+    else:
+        target_number = min(attacker["ultimate"][0]["meta"].get("target", 1), enemy_number)
+
+    boss_dmg = calculate_damage(ult_multiplier + extra_multiplier, base_atk_total, total_atk, boss_defence * def_debuff_value, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, boss_break)
+
+    if other == "less":
+        enemy_dmg = calculate_damage(extra_multiplier, base_atk_total, total_atk, enemy_defence * def_debuff_value, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, enemy_break)
+    else:
+        enemy_dmg = calculate_damage(ult_multiplier + extra_multiplier, base_atk_total, total_atk, enemy_defence * def_debuff_value, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, enemy_break)
 
     target_number = min(attacker["ultimate"][0]["meta"].get("target", 1), enemy_number)
     expected = boss_dmg * (crit_dmg * crit_rate + (1 - crit_rate)) + enemy_dmg * (crit_dmg * crit_rate + (1 - crit_rate)) * (target_number - 1)

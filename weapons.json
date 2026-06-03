@@ -27,5 +27,45 @@
     "buff_debuffs": [
       {"type": "atk", "amount": 0.2}
     ]
+  },
+  {
+    "name": "あの日と同じ嫌な月",
+    "atk": 356,
+    "buff_debuffs": [
+      {"type": "crit_dmg", "amount": 0.085},
+      {"type": "dmg_dealt", "amount": 0.125}
+    ]
+  },
+  {
+    "name": "わからないあの子",
+    "atk": 352,
+    "buff_debuffs": [
+      {"type": "crit_dmg", "amount": 0.085},
+      {"type": "crit_rate", "amount": 0.075}
+    ]
+  },
+  {
+    "name": "いつかまた出会えると信じて",
+    "atk": 349,
+    "buff_debuffs": [
+      {"type": "ele_advantage_dmg", "amount": 0.2}
+    ]
+  },
+  {
+    "name": "〈物語〉コラボ記念②",
+    "atk": 342,
+    "buff_debuffs": [
+      {"type": "dmg_dealt", "amount": 0.125},
+      {"type": "atk", "amount": 0.125}
+    ],
+    "condition": "dark"
+  },
+  {
+    "name": "あなただけがいない世界で",
+    "atk": 313,
+    "buff_debuffs": [
+      {"type": "dmg_dealt", "amount": 0.2}
+    ],
+    "condition": "fire"
   }
 ]
