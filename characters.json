@@ -1,30 +1,26 @@
 [
   {
-    "name": "眼鏡ほむら",
-    "rarity": "5",
-    "element": "無",
-    "role": "Buffer",
-    "hp": 7921.0,
+    "name": "水着さやか",
     "atk": 2572.0,
-    "defense": 2585.0,
     "speed": 116.0,
     "ultimate": [
         {
-        "name": "時間停止攻撃",
-        "type": "必殺技",
-        "power": 2.7,
-        "break_gauge": 35,
-        "element": "無",
-        "desc": "",
+        "power": 3.0,
         "meta": {
-            "target": "敵単体",
-            "magic_increase": 0,
+            "target": "敵全体",
+            "magic_increase": 5,
             "cost_mp": 75,
             "buff_debuffs": [
                     {
-                    "target": "味方全体",
-                    "type": "必殺技与ダメージUP",
-                    "amount": 0.4,
+                    "target": "敵全体",
+                    "type": "水刃",
+                    "amount": 1.6,
+                    "duration": 5
+                    },
+                    {
+                    "target": "敵全体",
+                    "type": "防御力",
+                    "amount": -0.3,
                     "duration": 2
                     }
                 ]
@@ -33,21 +29,16 @@
     ],
     "battle_skills": [
         {
-        "name": "自作爆弾投擲",
-        "type": "戦闘スキル",
-        "power": 1.50,
-        "break_gauge": 20,
-        "element": "無",
-        "desc": "",
+        "power": 1.5,
         "meta": {
-            "target": "敵単体",
-            "magic_increase": 1,
+            "target": "敵全体",
+            "magic_increase": 3,
             "buff_debuffs": [
                     {
-                    "target": "味方全体",
-                    "type": "行動順UP",
-                    "amount": 0.15,
-                    "duration": 0
+                    "target": "敵全体",
+                    "type": "水刃",
+                    "amount": 1.0,
+                    "duration": 8
                     }
                 ]
             }
@@ -55,131 +46,29 @@
     ],
     "normal_attack": [
         {
-        "name": "通常攻撃",
-        "type": "通常攻撃",
         "power": 0.50,
-        "break_gauge": 10,
-        "element": "無",
-        "desc": "",
-        "meta": {}
+        "meta": {"magic_increase": 2}
         }
     ],
     "abilities": [
         {
-        "name": "アサルトチャージ",
-        "type": "アビリティ",
-        "power": 0,
-        "desc": "",
-        "meta": {
-                "buff_debuffs": [
+        "buff_debuffs": [
                     {
-                    "target": "味方全体",
-                    "type": "スピードUP",
-                    "amount": 0.15,
-                    "duration": -1
+                    "target": "味方単体",
+                    "type": "与ダメージ",
+                    "amount": 0.3,
+                    "duration": "水刃"
                     },
                     {
-                    "target": "味方全体",
-                    "type": "攻撃力UP",
-                    "amount": 0.05,
-                    "duration": -1
+                    "target": "味方単体",
+                    "type": "攻撃力",
+                    "amount": 0.02,
+                    "duration": -1,
+                    "other":"amount*magic"
                     }
-                ],
-                "magic_point":[
                 ]
-            }
         }
     ],
-    "metadata": {}
-  },
-  {
-    "name": "ダミーA!!",
-    "rarity": "3",
-    "element": "火",
-    "role": "Attacker",
-    "hp": 1000.0,
-    "atk": 500.0,
-    "defense": 100.0,
-    "speed": 80.0,
-    "ultimate": [],
-    "battle_skills": [],
-    "normal_attack": [],
-    "abilities": [],
-    "metadata": {}
-  },
-  {
-    "name": "ダミーB",
-    "rarity": "4",
-    "element": "水",
-    "role": "Healer",
-    "hp": 2000.0,
-    "atk": 200.0,
-    "defense": 300.0,
-    "speed": 90.0,
-    "ultimate": [],
-    "battle_skills": [],
-    "normal_attack": [],
-    "abilities": [],
-    "metadata": {}
-  },
-  {
-    "name": "ダミーC",
-    "rarity": "3",
-    "element": "光",
-    "role": "Attacker",
-    "hp": 1200.0,
-    "atk": 450.0,
-    "defense": 120.0,
-    "speed": 75.0,
-    "ultimate": [],
-    "battle_skills": [],
-    "normal_attack": [],
-    "abilities": [],
-    "metadata": {}
-  },
-  {
-    "name": "ダミーD",
-    "rarity": "5",
-    "element": "闇",
-    "role": "Buffer",
-    "hp": 3000.0,
-    "atk": 300.0,
-    "defense": 400.0,
-    "speed": 100.0,
-    "ultimate": [],
-    "battle_skills": [],
-    "normal_attack": [],
-    "abilities": [],
-    "metadata": {}
-  },
-  {
-    "name": "ダミーE",
-    "rarity": "2",
-    "element": "風",
-    "role": "Healer",
-    "hp": 1500.0,
-    "atk": 150.0,
-    "defense": 200.0,
-    "speed": 60.0,
-    "ultimate": [],
-    "battle_skills": [],
-    "normal_attack": [],
-    "abilities": [],
-    "metadata": {}
-  },
-  {
-    "name": "ダミーF",
-    "rarity": "4",
-    "element": "土",
-    "role": "Attacker",
-    "hp": 2500.0,
-    "atk": 600.0,
-    "defense": 150.0,
-    "speed": 95.0,
-    "ultimate": [],
-    "battle_skills": [],
-    "normal_attack": [],
-    "abilities": [],
     "metadata": {}
   }
 ]
