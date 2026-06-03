@@ -115,8 +115,8 @@ ability_flower = {"atk":st.number_input("能力晶花のサブステータスに
                   "spd":st.number_input("能力晶花のサブステータスによるスピード（実数値）", min_value=0, max_value=12, value=0),
                   "crit_dmg":st.number_input("能力晶花のサブステータスによるクリティカルダメージ（％）", min_value=0.0, max_value=30.0, value=0.0),
                   "crit_rate":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0.0, max_value=15.0, value=0.0)}
-crit_dmg += ability_flower["crit_dmg"]
-crit_rate += ability_flower["crit_rate"]
+crit_dmg += ability_flower["crit_dmg"]/100
+crit_rate += ability_flower["crit_rate"]/100
 
 total_spd = chara1["speed"] * speed_buff_value + ability_flower["spd"]
 base_atk = st.number_input("基礎攻撃力＝（魔法少女＋ポートレイト＋サポートキオク）の基礎攻撃力", min_value=0, max_value=9999, value=0)
