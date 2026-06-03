@@ -106,7 +106,7 @@ mp_buff = [i for i in all_bd if i["type"] == "mp"]
 for i in mp_buff:
         mp_buff_value += i["amount"]
 
-ele_advantage_dmg = 1
+ele_advantage_dmg = 0
 ele_advantage_dmg_buff = [i for i in all_bd if i["type"] == "ele_advantage_dmg"]
 for i in ele_advantage_dmg_buff:
         ele_advantage_dmg += i["amount"]
@@ -122,7 +122,7 @@ total_spd = chara1["speed"] * speed_buff_value + ability_flower["spd"]
 base_atk = st.number_input("基礎攻撃力＝（魔法少女＋ポートレイト＋サポートキオク）の基礎攻撃力", min_value=0, max_value=9999, value=0)
 total_atk = base_atk * (1 + atk_buff_value) + ability_flower["atk"]
 total_def = DEFENCE * def_debuff_value
-ele_res = 1
+ele_res = 0
 
 skill_damage = calculate_damage(chara1["battle_skills"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
 ult_damage = calculate_damage(chara1["ultimate"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
