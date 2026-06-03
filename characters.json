@@ -19,7 +19,7 @@
                     },
                     {
                     "target": "敵全体",
-                    "type": "防御力",
+                    "type": "def",
                     "amount": -0.3,
                     "duration": 2
                     }
