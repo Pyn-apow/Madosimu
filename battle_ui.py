@@ -8,14 +8,14 @@ def load_characters(filepath: str) -> dict:
         data = json.load(f)
     return {c["name"]: c for c in data}
 
-def calculate_damage(ability_multiplier,base_atk,total_atk,total_def,dmg_dealt,dmg_taken,ele_res, ele_advantage_dmg):
+def calculate_damage(ability_multiplier,base_atk,total_atk,total_def,dmg_dealt,dmg_taken,ele_res, ele_advantage_dmg,break_value):
     Ability_Damage_Base = ability_multiplier * base_atk * ((base_atk / 124) ** 1.2 + 12) / 20
     Defense_Factor = min((total_atk + 10) / (total_def + 10) * 0.12,2)
     Damage_Dealt_Factor = 1 + dmg_dealt
     Damage_Taken_Factor = 1 + dmg_taken
     Elemental_Resistance_Factor = 1 - ele_res
     Effective_Element_Factor = 1.2 + ele_advantage_dmg
-    Break_Factor = BREAK/100
+    Break_Factor = break_value/100
     return Ability_Damage_Base * Defense_Factor * Damage_Dealt_Factor * Damage_Taken_Factor * Elemental_Resistance_Factor * Effective_Element_Factor * Break_Factor
 
 def get_all_buff_debuffs(chara: dict,totsu) -> list:
@@ -37,8 +37,14 @@ def get_all_buff_debuffs(chara: dict,totsu) -> list:
     return all_bd
 
 # ── メイン ────────────────────────────────────
-st.title("""魔法少女比較シミュレーター
-         ※これは正確なダメージを計算するものではありません。また、すべてのバフ・デバフが発動している状態を想定しています。""")
+st.title("""
+         魔法少女用理論値・期待値比較シミュレーター
+         ※すべてのバフ・デバフが発動している状態を想定しています。
+         また、ランダム攻撃が必殺技に含まれる魔法少女は、計算上の理論値が実際の理論値より低く出ます。
+         （これはこのシミュレーターが、ランダム攻撃のダメージを敵全員に等しく分配しているためです。
+         しかしランダム攻撃を持つ魔法少女の必殺技で理論値を出すことは現実的に不可能なので、気にする必要はないと思われます。）
+         期待値に影響はありません。
+         """)
 
 roster = load_characters("characters.json")
 
@@ -49,8 +55,14 @@ bd2 = st.selectbox("バッファー・デバッファーを選択", ["なし"] +
 bd3 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd3")
 bd4 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd4")
 totsu = [st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="totsu1"),st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="totsu2"),st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="totsu3"),st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="totsu4"),st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="totsu5")]
-BREAK = st.slider("敵のブレイクボーナス（魔法少女同士の比較には影響しません）", min_value=100, max_value=999, value=200)
-DEFENCE = st.number_input("敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0)
+ENEMY_NUMBER = st.radio("敵の数",[1,2,3,4,5],horizontal=True)
+BOSS_BREAK = st.slider("ボスのブレイクボーナス", min_value=100, max_value=999, value=200)
+BOSS_DEFENCE = st.number_input("ボスの防御力", min_value=0.0, max_value=100000.0, value=1000.0)
+if ENEMY_NUMBER != 1:
+    ENEMY_BREAK = st.slider("ほかの敵のブレイクボーナス", min_value=100, max_value=999, value=200)
+    ENEMY_DEFENCE = st.number_input("ほかの敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0)
+else:
+    pass
 
 # 選択されたキャラのデータを取得
 chara1 = roster[attacker]
@@ -66,6 +78,10 @@ st.write(all_bd)
 atk_buff_value = 0
 atk_buff = [i for i in all_bd if i["type"] == "atk"]
 for i in atk_buff:
+    if i in "other":
+        if i["other"] == "enemy_number":
+            atk_buff_value += i["amount"] * ENEMY_NUMBER
+    else:
         atk_buff_value += i["amount"]
 
 def_debuff_value = 1
@@ -88,60 +104,64 @@ dmg_dealt_buff = [i for i in all_bd if i["type"] == "dmg_dealt"]
 for i in dmg_dealt_buff:
         dmg_dealt_buff_value += i["amount"]
 
-dmg_dealt_buff_value = 0
-dmg_dealt_buff = [i for i in all_bd if i["type"] == "dmg_dealt"]
-for i in dmg_dealt_buff:
-        dmg_dealt_buff_value += i["amount"]
 
 dmg_taken_debuff_value = 0
 dmg_taken_debuff = [i for i in all_bd if i["type"] == "dmg_taken"]
 for i in dmg_taken_debuff:
         dmg_taken_debuff_value += i["amount"]
 
-speed_buff_value = 1
-speed_buff = [i for i in all_bd if i["type"] == "speed"]
-for i in speed_buff:
-        speed_buff_value += i["amount"]
+# speed_buff_value = 1
+# speed_buff = [i for i in all_bd if i["type"] == "speed"]
+# for i in speed_buff:
+#         speed_buff_value += i["amount"]
 
-mp_buff_value = 1
-mp_buff = [i for i in all_bd if i["type"] == "mp"]
-for i in mp_buff:
-        mp_buff_value += i["amount"]
+# mp_buff_value = 1
+# mp_buff = [i for i in all_bd if i["type"] == "mp"]
+# for i in mp_buff:
+#         mp_buff_value += i["amount"]
 
 ele_advantage_dmg = 0
 ele_advantage_dmg_buff = [i for i in all_bd if i["type"] == "ele_advantage_dmg"]
 for i in ele_advantage_dmg_buff:
         ele_advantage_dmg += i["amount"]
 
+# ability_flower = {"atk":st.number_input("能力晶花のサブステータスによる攻撃力（実数値）", min_value=0, max_value=180, value=0),
+#                   "spd":st.number_input("能力晶花のサブステータスによるスピード（実数値）", min_value=0, max_value=12, value=0),
+#                   "crit_dmg":st.number_input("能力晶花のサブステータスによるクリティカルダメージ（％）", min_value=0.0, max_value=30.0, value=0.0),
+#                   "crit_rate":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0.0, max_value=15.0, value=0.0)}
 ability_flower = {"atk":st.number_input("能力晶花のサブステータスによる攻撃力（実数値）", min_value=0, max_value=180, value=0),
-                  "spd":st.number_input("能力晶花のサブステータスによるスピード（実数値）", min_value=0, max_value=12, value=0),
-                  "crit_dmg":st.number_input("能力晶花のサブステータスによるクリティカルダメージ（％）", min_value=0.0, max_value=30.0, value=0.0),
-                  "crit_rate":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0.0, max_value=15.0, value=0.0)}
+                  "crit_rate":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0.0, max_value=15.0, value=0.0),
+                  "crit_dmg":st.number_input("能力晶花のサブステータスによるクリティカルダメージ（％）", min_value=0.0, max_value=30.0, value=0.0)}
 crit_dmg += ability_flower["crit_dmg"]/100
-crit_rate += ability_flower["crit_rate"]/100
 
-total_spd = chara1["speed"] * speed_buff_value + ability_flower["spd"]
+# total_spd = chara1["speed"] * speed_buff_value + ability_flower["spd"]
 base_atk = st.number_input("基礎攻撃力＝（魔法少女＋ポートレイト＋サポートキオク）の基礎攻撃力", min_value=0, max_value=9999, value=0)
 total_atk = base_atk * (1 + atk_buff_value) + ability_flower["atk"]
-total_def = DEFENCE * def_debuff_value
 ele_res = 0
 
-skill_damage = calculate_damage(chara1["battle_skills"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
-ult_damage = calculate_damage(chara1["ultimate"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg)
-st.write((chara1["battle_skills"][0]["power"],base_atk,total_atk,total_def,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg))
-sum_damage = 0
-mp = 0
-skill_dmg_crit = skill_damage * crit_dmg 
-skill_dmg_noncrit = skill_damage 
-ult_dmg_crit = ult_damage * crit_dmg 
-ult_dmg_noncrit = ult_damage 
-for _ in range(int(total_spd)):
-    sum_damage += skill_dmg_crit * crit_rate + skill_dmg_noncrit * (1-crit_rate)
-    mp += 30 * mp_buff_value
-    if mp >= chara1["ultimate"][0]["meta"]["cost_mp"]:
-          mp = 5 * mp_buff_value
-          sum_damage += ult_dmg_crit * crit_rate + ult_dmg_noncrit * (1-crit_rate)
+ult_multiplier = chara1["ultimate"][0]["power"]
+if chara1["ultimate"][0]["meta"]["other"] == "random":
+    ult_multiplier += chara1["ultimate"][0]["meta"]["power"]/ENEMY_NUMBER
 
-st.write(skill_dmg_crit,skill_dmg_noncrit)
-st.write(ult_dmg_crit,ult_dmg_noncrit)
-st.write(sum_damage)
+boss_ult_damage = calculate_damage(chara1["ultimate"][0]["power"],base_atk,total_atk,BOSS_DEFENCE * def_debuff_value,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg,BOSS_BREAK)
+st.write((ult_multiplier,base_atk,total_atk,BOSS_DEFENCE * def_debuff_value,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg,BOSS_BREAK))
+if ENEMY_NUMBER != 1:
+    enemy_ult_damage = calculate_damage(chara1["ultimate"][0]["power"],base_atk,total_atk,ENEMY_DEFENCE * def_debuff_value,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg,ENEMY_BREAK)
+    st.write((ult_multiplier,base_atk,total_atk,ENEMY_DEFENCE * def_debuff_value,dmg_dealt_buff_value,dmg_taken_debuff_value,ele_res, ele_advantage_dmg,ENEMY_BREAK))
+# sum_damage = 0
+# mp = 0
+
+# for _ in range(int(total_spd)):
+#     sum_damage += skill_dmg_crit * crit_rate + skill_dmg_noncrit * (1-crit_rate)
+#     mp += 30 * mp_buff_value
+#     if mp >= chara1["ultimate"][0]["meta"]["cost_mp"]:
+#           mp = 5 * mp_buff_value
+#           sum_damage += ult_dmg_crit * crit_rate + ult_dmg_noncrit * (1-crit_rate)
+attack_number = chara1["ultimate"][0]["attack_number"]
+target_number = min(chara1["ultimate"][0]["meta"]["target"],ENEMY_NUMBER)
+if attack_number > 0:   
+    st.write(boss_ult_damage*crit_dmg + enemy_ult_damage*crit_dmg*(target_number-1),crit_rate**(target_number*attack_number))
+else:
+    st.write(boss_ult_damage*crit_dmg + enemy_ult_damage*crit_dmg*(target_number-1),"測定不能")
+st.write(boss_ult_damage*(crit_dmg*crit_rate+(1-crit_rate)) + (enemy_ult_damage*(crit_dmg*crit_rate+(1-crit_rate))*(target_number-1)))
+# st.write(sum_damage)

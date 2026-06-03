@@ -1,27 +1,200 @@
 [
   {
+    "name": "悪魔ほむら",
+    "role":"attacker",
+    "ultimate": [
+        {
+        "power": 2.6,
+        "attack_number":-1,
+        "meta": {
+            "target": 5,
+            "cost_mp": 90,
+            "other" : "random",
+            "power" : 1.0
+            }
+        }
+    ],
+    "battle_skills": [
+        {
+        "meta": {
+            "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.15
+                    },
+                    {
+                    "target": 1,
+                    "type": "dmg_taken",
+                    "amount": 0.1
+                    }
+                ]
+            }
+        }
+    ]
+    ,
+    "abilities": [
+        {
+        "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "dmg_dealt",
+                    "amount": 0.3
+                    },
+                    {
+                    "target": 1,
+                    "type": "crit_rate",
+                    "amount": 0.3
+                    },
+                    {
+                    "target": 1,
+                    "type": "dmg_dealt",
+                    "amount": 0.2
+                    },
+                    {
+                    "target": 1,
+                    "type": "crit_dmg",
+                    "amount": 0.4
+                    },
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.2,
+                    "totsu" : 1
+                    },
+                    {
+                    "target": 1,
+                    "type": "dmg_dealt",
+                    "amount": 0.2,
+                    "totsu" : 2
+                    }
+                ]
+        }
+    ],
+    "support_abilities": [
+        {
+        "condition" : "attacker",
+        "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.15
+                    },
+                    {
+                    "target": 1,
+                    "type": "dmg_dealt",
+                    "amount": 0.1
+                    }
+                ]
+        }
+    ],
+    "metadata": {}
+  },    
+    {
+    "name": "ホーリーマミ",
+    "role":"attacker",
+    "ultimate": [
+        {
+        "power": 2.6,
+        "attack_number":-1,
+        "meta": {
+            "target": 5,
+            "cost_mp": 90,
+            "other" : "random",
+            "power" : 2.6
+            }
+        }
+    ],
+    "battle_skills": [
+        {
+        "meta": {
+            "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "ele_advantage_dmg",
+                    "amount": 0.2
+                    }
+                ]
+            }
+        }
+    ]
+    ,
+    "abilities": [
+        {
+        "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "dmg_dealt",
+                    "amount": 0.2
+                    },
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.05,
+                    "other" : "enemy_number"
+                    },
+                    {
+                    "target": 1,
+                    "type": "ele_advantage_dmg",
+                    "amount": 0.3,
+                    "totsu":2
+                    },
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.2,
+                    "totsu" : 1
+                    },
+                    {
+                    "target": 1,
+                    "type": "dmg_dealt",
+                    "amount": 0.1,
+                    "other" : "enemy_number",
+                    "totsu" : 2
+                    }
+                ]
+        }
+    ],
+    "support_abilities": [
+        {
+        "condition" : "dark",
+        "buff_debuffs": [
+                    {
+                    "target": 1,
+                    "type": "atk",
+                    "amount": 0.03,
+                    "other" : "enemy_number"
+                    },
+                    {
+                    "target": 1,
+                    "type": "ele_advantage_dmg",
+                    "amount": 0.25
+                    }
+                ]
+        }
+    ],
+    "metadata": {}
+  },
+  {
     "name": "水着さやか",
     "role":"attacker",
-    "speed": 116.0,
     "ultimate": [
         {
         "power": 3.0,
+        "attack_number":5,
         "meta": {
-            "target": "敵全体",
-            "magic_increase": 5,
+            "target": 5,
             "cost_mp": 75,
             "buff_debuffs": [
                     {
-                    "target": "敵全体",
+                    "target": 5,
                     "type": "水刃",
-                    "amount": 1.6,
-                    "duration": 5
+                    "amount": 1.6
                     },
                     {
-                    "target": "敵全体",
+                    "target": 5,
                     "type": "def",
-                    "amount": 0.3,
-                    "duration": 2
+                    "amount": 0.3
                     }
                 ]
             }
@@ -29,54 +202,35 @@
     ],
     "battle_skills": [
         {
-        "power": 1.5,
         "meta": {
-            "target": "敵全体",
-            "magic_increase": 3,
             "buff_debuffs": [
                     {
-                    "target": "敵全体",
+                    "target": 5,
                     "type": "水刃",
-                    "amount": 1.0,
-                    "duration": 8
+                    "amount": 1.0
                     }
                 ]
             }
         }
-    ],
-    "normal_attack": [
-        {
-        "power": 0.50,
-        "meta": {"magic_increase": 2}
-        }
-    ],
+    ]
+    ,
     "abilities": [
         {
         "buff_debuffs": [
                     {
                     "target": "味方",
                     "type": "dmg_dealt",
-                    "amount": 0.3,
-                    "duration": "水刃"
+                    "amount": 0.3
                     },
                     {
                     "target": "味方",
                     "type": "atk",
-                    "amount": 0.3,
-                    "duration": -1
+                    "amount": 0.3
                     },
                     {
                     "target": "味方",
                     "type": "atk",
                     "amount": 0.1,
-                    "duration": 2,
-                    "totsu":2
-                    },
-                    {
-                    "target": "味方",
-                    "type": "speed",
-                    "amount": 0.1,
-                    "duration": 2,
                     "totsu":2
                     }
                 ]

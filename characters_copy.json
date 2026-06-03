@@ -1,0 +1,87 @@
+[
+  {
+    "name": "水着さやか",
+    "role":"attacker",
+    "speed": 116.0,
+    "ultimate": [
+        {
+        "power": 3.0,
+        "meta": {
+            "target": "敵全体",
+            "magic_increase": 5,
+            "cost_mp": 75,
+            "buff_debuffs": [
+                    {
+                    "target": "敵全体",
+                    "type": "水刃",
+                    "amount": 1.6,
+                    "duration": 5
+                    },
+                    {
+                    "target": "敵全体",
+                    "type": "def",
+                    "amount": 0.3,
+                    "duration": 2
+                    }
+                ]
+            }
+        }
+    ],
+    "battle_skills": [
+        {
+        "power": 1.5,
+        "meta": {
+            "target": "敵全体",
+            "magic_increase": 3,
+            "buff_debuffs": [
+                    {
+                    "target": "敵全体",
+                    "type": "水刃",
+                    "amount": 1.0,
+                    "duration": 8
+                    }
+                ]
+            }
+        }
+    ],
+    "normal_attack": [
+        {
+        "power": 0.50,
+        "meta": {"magic_increase": 2}
+        }
+    ],
+    "abilities": [
+        {
+        "buff_debuffs": [
+                    {
+                    "target": "味方",
+                    "type": "dmg_dealt",
+                    "amount": 0.3,
+                    "duration": "水刃"
+                    },
+                    {
+                    "target": "味方",
+                    "type": "atk",
+                    "amount": 0.3,
+                    "duration": -1
+                    },
+                    {
+                    "target": "味方",
+                    "type": "atk",
+                    "amount": 0.1,
+                    "duration": 2,
+                    "totsu":2
+                    },
+                    {
+                    "target": "味方",
+                    "type": "speed",
+                    "amount": 0.1,
+                    "duration": 2,
+                    "totsu":2
+                    }
+                ]
+        }
+    ],
+    "metadata": {}
+  }
+]
