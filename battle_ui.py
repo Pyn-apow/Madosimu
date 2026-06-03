@@ -48,7 +48,7 @@ bd1 = st.selectbox("バッファー・デバッファーを選択", ["なし"] +
 bd2 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd2")
 bd3 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd3")
 bd4 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd4")
-totsu = [st.selectbox("限界突破数を選択", [0,1,2,3,4,5]),st.selectbox("限界突破数を選択", [0,1,2,3,4,5]),st.selectbox("限界突破数を選択", [0,1,2,3,4,5]),st.selectbox("限界突破数を選択", [0,1,2,3,4,5]),st.selectbox("限界突破数を選択", [0,1,2,3,4,5])]
+totsu = [st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="attacker"),st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="bd1"),st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="bd2"),st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="bd3"),st.selectbox("限界突破数を選択", [0,1,2,3,4,5],key="bd4")]
 BREAK = st.slider("敵のブレイクボーナス（魔法少女同士の比較には影響しません）", min_value=100, max_value=999, value=200)
 DEFENCE = st.number_input("敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0)
 
