@@ -86,7 +86,7 @@
     ]}}],
     "abilities": [{"buff_debuffs": [
       {"target": 1, "type": "dmg_dealt", "amount": 0.15,"other":"more"},
-      {"target": 1, "type": "dmg_dealt", "amount": 0.3,"other":"break200"},
+      {"target": 1, "type": "dmg_dealt", "amount": 0.3,"other":"break_200"},
       {"target": 1, "type": "atk", "amount": 0.2, "totsu": 1}
     ]}],
     "support_abilities": [{"condition": "attacker", "buff_debuffs": [

@@ -199,25 +199,6 @@ with tab2:
     if not registered_attackers:
         st.warning("タブ①でアタッカーを登録してください。")
 
-    st.subheader("敵の設定")
-    col1, col2 = st.columns(2)
-    enemy_number = col1.radio("敵の数", [1, 2, 3, 4, 5], horizontal=True)
-    max_supporters = col2.radio("バッファー・デバッファーの人数", [0, 1, 2, 3, 4], horizontal=True)
-
-    col3, col4 = st.columns(2)
-    boss_break = col3.number_input("ボスのブレイクボーナス", min_value=100, max_value=999, value=200)
-    boss_defence = col4.number_input("ボスの防御力", min_value=0.0, max_value=100000.0, value=1000.0)
-
-    col5, col6 = st.columns(2)
-    enemy_break = col5.number_input("他の敵のブレイクボーナス", min_value=100, max_value=999, value=200, disabled=enemy_number == 1)
-    enemy_defence = col6.number_input("他の敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0, disabled=enemy_number == 1)
-
-    if enemy_number == 1:
-        enemy_break = 0
-        enemy_defence = 0.0
-
-    sort_by = st.radio("ランキング基準", ["期待値", "理論値"], horizontal=True)
-
     st.subheader("計算結果（上位3件）")
 
     results = []
@@ -306,3 +287,17 @@ with tab3:
         )
         compressed = base64.b64encode(save_data.encode()).decode()
         st.text_area("セーブデータ（コピーして保存）", value=compressed, height=68)
+
+with st.sidebar:
+    st.subheader("敵の設定")
+    enemy_number = st.radio("敵の数", [1, 2, 3, 4, 5], horizontal=True)
+    max_supporters = st.radio("バッファー人数", [0, 1, 2, 3, 4], horizontal=True)
+    boss_break = st.number_input("ボスのブレイクボーナス", min_value=100, max_value=999, value=200)
+    boss_defence = st.number_input("ボスの防御力", min_value=0.0, max_value=100000.0, value=1000.0)
+    col5, col6 = st.columns(2)
+    enemy_break = col5.number_input("他の敵のブレイク", min_value=100, max_value=999, value=200, disabled=enemy_number==1)
+    enemy_defence = col6.number_input("他の敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0, disabled=enemy_number==1)
+    if enemy_number == 1:
+        enemy_break = 0
+        enemy_defence = 0.0
+    sort_by = st.radio("ランキング基準", ["期待値", "理論値"], horizontal=True)
