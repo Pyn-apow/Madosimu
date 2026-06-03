@@ -47,8 +47,8 @@ bd1 = st.selectbox("バッファー・デバッファーを選択", ["なし"] +
 bd2 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd2")
 bd3 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd3")
 bd4 = st.selectbox("バッファー・デバッファーを選択", ["なし"] + [name for name, c in roster.items() if c.get("role") == "buffer" or c.get("role") == "debuffer"],key="bd4")
-BREAK = st.slider("敵のブレイクボーナス（魔法少女同士の比較には影響しません）", min_value=100, max_value=999, value=1)
-DEFENCE = st.number_input("敵の防御力", min_value=0.0, max_value=100000.0, value=1.0)
+BREAK = st.slider("敵のブレイクボーナス（魔法少女同士の比較には影響しません）", min_value=100, max_value=999, value=200)
+DEFENCE = st.number_input("敵の防御力", min_value=0.0, max_value=100000.0, value=1000.0)
 
 # 選択されたキャラのデータを取得
 chara1 = roster[attacker]
@@ -111,15 +111,15 @@ ele_advantage_dmg_buff = [i for i in all_bd if i["type"] == "ele_advantage_dmg"]
 for i in ele_advantage_dmg_buff:
         ele_advantage_dmg += i["amount"]
 
-ability_flower = {"atk":st.number_input("能力晶花のサブステータスによる攻撃力（実数値）", min_value=0, max_value=180, value=1),
-                  "spd":st.number_input("能力晶花のサブステータスによるスピード（実数値）", min_value=0, max_value=12, value=1),
-                  "crit_dmg":st.number_input("能力晶花のサブステータスによるクリティカルダメージ（％）", min_value=0.0, max_value=30.0, value=0.1),
-                  "crit_rate":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0.0, max_value=15.0, value=0.1)}
+ability_flower = {"atk":st.number_input("能力晶花のサブステータスによる攻撃力（実数値）", min_value=0, max_value=180, value=0),
+                  "spd":st.number_input("能力晶花のサブステータスによるスピード（実数値）", min_value=0, max_value=12, value=0),
+                  "crit_dmg":st.number_input("能力晶花のサブステータスによるクリティカルダメージ（％）", min_value=0.0, max_value=30.0, value=0.0),
+                  "crit_rate":st.number_input("能力晶花のサブステータスによるクリティカル率（％）", min_value=0.0, max_value=15.0, value=0.0)}
 crit_dmg += ability_flower["crit_dmg"]
 crit_rate += ability_flower["crit_rate"]
 
 total_spd = chara1["speed"] * speed_buff_value + ability_flower["spd"]
-base_atk = st.number_input("基礎攻撃力＝（魔法少女＋ポートレイト＋サポートキオク）の基礎攻撃力", min_value=0, max_value=9999, value=1)
+base_atk = st.number_input("基礎攻撃力＝（魔法少女＋ポートレイト＋サポートキオク）の基礎攻撃力", min_value=0, max_value=9999, value=0)
 total_atk = base_atk * (1 + atk_buff_value) + ability_flower["atk"]
 total_def = DEFENCE * def_debuff_value
 ele_res = 1
