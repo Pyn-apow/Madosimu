@@ -78,7 +78,7 @@ st.write(all_bd)
 atk_buff_value = 0
 atk_buff = [i for i in all_bd if i["type"] == "atk"]
 for i in atk_buff:
-    if i in "other":
+    if "other" in i:
         if i["other"] == "enemy_number":
             atk_buff_value += i["amount"] * ENEMY_NUMBER
     else:
