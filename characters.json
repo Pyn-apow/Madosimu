@@ -1,7 +1,11 @@
 [
   {
     "name": "アルティメットまどか", "role": "attacker", "element": "light",
-    "ultimate": [{"power": 5, "attack_number": -1, "meta": {"target": 1, "cost_mp": 100, "other": "less", "power": 0.2,
+    "ultimate": [{"meta": {"cost_mp": 100,
+      "hits": [
+        {"power": 5.0, "target": 1},
+        {"power": 0.2, "target": -1, "scale": "less"}
+      ],
       "buff_debuffs": [
         {"target": 1, "type": "crit_dmg", "amount": 0.4}
       ]
@@ -17,12 +21,16 @@
     ]}],
     "support_abilities": [{"condition": "attacker", "buff_debuffs": [
       {"target": 1, "type": "atk", "amount": 0.2}
-    ]}],
-    "metadata": {}
+    ]}]
   },
   {
     "name": "悪魔ほむら", "role": "attacker", "element": "dark",
-    "ultimate": [{"power": 2.6, "attack_number": -1, "meta": {"target": 5, "cost_mp": 90, "other": "random", "power": 1.0}}],
+    "ultimate": [{"meta": {"cost_mp": 90,
+      "hits": [
+        {"power": 2.6, "target": -1, "scale": "random"},
+        {"power": 1.0, "target": -1, "scale": "random"}
+      ]
+    }}],
     "battle_skills": [{"meta": {"buff_debuffs": [
       {"target": 1, "type": "atk", "amount": 0.15},
       {"target": 1, "type": "dmg_taken", "amount": 0.1}
@@ -38,12 +46,16 @@
     "support_abilities": [{"condition": "attacker", "buff_debuffs": [
       {"target": 1, "type": "atk", "amount": 0.15},
       {"target": 1, "type": "dmg_dealt", "amount": 0.1}
-    ]}],
-    "metadata": {}
+    ]}]
   },
   {
     "name": "ホーリーマミ", "role": "attacker", "element": "dark",
-    "ultimate": [{"power": 2.6, "attack_number": -1, "meta": {"target": 5, "cost_mp": 90, "other": "random", "power": 2.6}}],
+    "ultimate": [{"meta": {"cost_mp": 90,
+      "hits": [
+        {"power": 2.6, "target": -1, "scale": "random"},
+        {"power": 2.6, "target": -1, "scale": "random"}
+      ]
+    }}],
     "battle_skills": [{"meta": {"buff_debuffs": [
       {"target": 1, "type": "ele_advantage_dmg", "amount": 0.2}
     ]}}],
@@ -57,12 +69,16 @@
     "support_abilities": [{"condition": "dark", "buff_debuffs": [
       {"target": 1, "type": "atk", "amount": 0.03, "other": "more"},
       {"target": 1, "type": "ele_advantage_dmg", "amount": 0.25}
-    ]}],
-    "metadata": {}
+    ]}]
   },
   {
     "name": "七海やちよ", "role": "attacker", "element": "water",
-    "ultimate": [{"power": 5, "attack_number": 1, "meta": {"target": 1, "cost_mp": 90,"buff_debuffs": [{"target": 1, "type": "crit_dmg", "amount": 0.2}]}}],
+    "ultimate": [{"meta": {"cost_mp": 90,
+      "hits": [
+        {"power": 5.0, "target": 1}
+      ],
+      "buff_debuffs": [{"target": 1, "type": "crit_dmg", "amount": 0.2}]
+    }}],
     "battle_skills": [{"meta": {"buff_debuffs": [
       {"target": 1, "type": "dmg_dealt", "amount": 0.3},
       {"target": 1, "type": "crit_rate", "amount": 0.2}
@@ -75,25 +91,26 @@
     ]}],
     "support_abilities": [{"condition": "water", "buff_debuffs": [
       {"target": 1, "type": "crit_dmg", "amount": 0.18}
-    ]}],
-    "metadata": {}
+    ]}]
   },
   {
     "name": "美国織莉子", "role": "attacker", "element": "light",
-    "ultimate": [{"power": 3.2, "attack_number": -1, "meta": {"target": 5, "cost_mp": 100, "other": "less", "power": 0.32
+    "ultimate": [{"meta": {"cost_mp": 100,
+      "hits": [
+        {"power": 3.2, "target": -1},
+        {"power": 0.32, "target": -1, "scale": "less"}
+      ]
     }}],
-    "battle_skills": [{"meta": {"buff_debuffs": [
-    ]}}],
+    "battle_skills": [{"meta": {"buff_debuffs": []}}],
     "abilities": [{"buff_debuffs": [
-      {"target": 1, "type": "dmg_dealt", "amount": 0.15,"other":"more"},
-      {"target": 1, "type": "dmg_dealt", "amount": 0.3,"other":"break_200"},
+      {"target": 1, "type": "dmg_dealt", "amount": 0.15, "other": "more"},
+      {"target": 1, "type": "dmg_dealt", "amount": 0.3, "other": "break_200"},
       {"target": 1, "type": "atk", "amount": 0.2, "totsu": 1}
     ]}],
     "support_abilities": [{"condition": "attacker", "buff_debuffs": [
       {"target": 1, "type": "ele_advantage_dmg", "amount": 0.25},
-      {"target": 1, "type": "dmg_dealt", "amount": 0.05,"other":"more"},
-      {"target": 1, "type": "dmg_dealt", "amount":-0.05}
-    ]}],
-    "metadata": {}
+      {"target": 1, "type": "dmg_dealt", "amount": 0.05, "other": "more"},
+      {"target": 1, "type": "dmg_dealt", "amount": -0.05}
+    ]}]
   }
 ]

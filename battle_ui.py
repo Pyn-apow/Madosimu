@@ -24,8 +24,7 @@ def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
         all_bd.extend(skill.get("meta", {}).get("buff_debuffs", []))
     for ability in chara.get("abilities", []):
         all_bd.extend(ability.get("buff_debuffs", []))
-    all_bd = [bd for bd in all_bd if totsu >= bd.get("totsu", 0)]
-    return all_bd
+    return [bd for bd in all_bd if totsu >= bd.get("totsu", 0)]
 
 def get_support_ability_bds(chara: dict, attacker_element: str, attacker_role: str) -> list:
     all_bd = []
@@ -41,94 +40,130 @@ def get_weapon_bds(weapon: dict, attacker_element: str) -> list:
         return []
     return weapon.get("buff_debuffs", [])
 
-def calculate_damage(ability_multiplier, base_atk, total_atk, total_def, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, break_value):
-    Ability_Damage_Base = ability_multiplier * base_atk * ((base_atk / 124) ** 1.2 + 12) / 20
-    Defense_Factor = min((total_atk + 10) / (total_def + 10) * 0.12, 2)
-    Damage_Dealt_Factor = 1 + dmg_dealt
-    Damage_Taken_Factor = 1 + dmg_taken
-    Elemental_Resistance_Factor = 1 - ele_res
-    Effective_Element_Factor = 1.2 + ele_advantage_dmg
-    Break_Factor = break_value / 100
-    return Ability_Damage_Base * Defense_Factor * Damage_Dealt_Factor * Damage_Taken_Factor * Elemental_Resistance_Factor * Effective_Element_Factor * Break_Factor
+def collect_buffs(all_bd: list, enemy_number: int, boss_break: int, enemy_break: int) -> dict:
+    def sum_type(bd_type, other=None, condition=None):
+        total = 0
+        for bd in all_bd:
+            if bd["type"] != bd_type:
+                continue
+            if condition is not None and bd.get("condition") != condition:
+                continue
+            if other is not None and bd.get("other") != other:
+                continue
+            if other is None and bd.get("other") in ("more", "break_200"):
+                continue
+            total += bd["amount"]
+        return total
+
+    atk_flat = sum_type("atk")
+    atk_more = sum_type("atk", other="more") * enemy_number
+
+    def_debuff = 1.0
+    for bd in all_bd:
+        if bd["type"] == "def":
+            def_debuff *= 1 - bd["amount"]
+
+    crit_dmg = 1.2 + sum_type("crit_dmg")
+    crit_rate = 0.1 + sum_type("crit_rate")
+    dmg_taken = sum_type("dmg_taken")
+    ele_advantage_dmg = sum_type("ele_advantage_dmg")
+
+    dmg_dealt_base = sum_type("dmg_dealt") + sum_type("dmg_dealt", other="more") * enemy_number
+    dmg_dealt_boss = dmg_dealt_base + (sum_type("dmg_dealt", other="break_200") if boss_break >= 200 else 0)
+    dmg_dealt_enemy = dmg_dealt_base + (sum_type("dmg_dealt", other="break_200") if enemy_break >= 200 else 0)
+
+    return {
+        "atk_multiplier": 1 + atk_flat + atk_more,
+        "def_debuff": def_debuff,
+        "crit_dmg": crit_dmg,
+        "crit_rate": crit_rate,
+        "dmg_taken": dmg_taken,
+        "ele_advantage_dmg": ele_advantage_dmg,
+        "dmg_dealt_boss": dmg_dealt_boss,
+        "dmg_dealt_enemy": dmg_dealt_enemy,
+    }
+
+def calculate_damage(multiplier, base_atk, total_atk, total_def, dmg_dealt, dmg_taken, ele_res, ele_advantage_dmg, break_value):
+    base = multiplier * base_atk * ((base_atk / 124) ** 1.2 + 12) / 20
+    defense = min((total_atk + 10) / (total_def + 10) * 0.12, 2)
+    return (base * defense
+            * (1 + dmg_dealt)
+            * (1 + dmg_taken)
+            * (1 - ele_res)
+            * (1.2 + ele_advantage_dmg)
+            * (break_value / 100))
+
+def compute_hit_damage(hit, base_atk, total_atk, buffs, enemy_number, boss_defence, enemy_defence, boss_break, enemy_break):
+    scale = hit.get("scale")
+    power = hit["power"]
+    raw_target = hit["target"]
+    target = enemy_number if raw_target == -1 else min(raw_target, enemy_number)
+
+    if scale == "less":
+        multiplier = power * (5 - enemy_number)
+    elif scale == "random":
+        multiplier = power / enemy_number
+    else:
+        multiplier = power
+
+    def_debuff = buffs["def_debuff"]
+    ele_res = 0
+
+    boss_dmg = calculate_damage(
+        multiplier, base_atk, total_atk,
+        boss_defence * def_debuff,
+        buffs["dmg_dealt_boss"], buffs["dmg_taken"],
+        ele_res, buffs["ele_advantage_dmg"], boss_break
+    )
+
+    if target <= 1:
+        return boss_dmg, 0, 1
+
+    enemy_dmg = calculate_damage(
+        multiplier, base_atk, total_atk,
+        enemy_defence * def_debuff,
+        buffs["dmg_dealt_enemy"], buffs["dmg_taken"],
+        ele_res, buffs["ele_advantage_dmg"], enemy_break
+    )
+
+    return boss_dmg, enemy_dmg, target
 
 def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, supporters, supporter_totsus, support_ability_bds, weapon, enemy_number, boss_break, boss_defence, enemy_break, enemy_defence):
     attacker_element = attacker.get("element", "")
 
     all_bd = get_all_buff_debuffs(attacker, attacker_totsu)
-    for i, sup in enumerate(supporters):
+    for sup, totsu in zip(supporters, supporter_totsus):
         if sup is not None:
-            all_bd += get_all_buff_debuffs(sup, supporter_totsus[i])
+            all_bd += get_all_buff_debuffs(sup, totsu)
     all_bd += support_ability_bds
     if weapon:
         all_bd += get_weapon_bds(weapon, attacker_element)
 
-    atk_buff_value = 0
-    for bd in [i for i in all_bd if i["type"] == "atk"]:
-        if "other" in bd and bd["other"] == "more":
-            atk_buff_value += bd["amount"] * enemy_number
-        else:
-            atk_buff_value += bd["amount"]
-
-    def_debuff_value = 1
-    for bd in [i for i in all_bd if i["type"] == "def"]:
-        def_debuff_value *= 1 - bd["amount"]
-
-    crit_dmg = 1.2
-    for bd in [i for i in all_bd if i["type"] == "crit_dmg"]:
-        crit_dmg += bd["amount"]
-
-    crit_rate = 0.1
-    for bd in [i for i in all_bd if i["type"] == "crit_rate"]:
-        crit_rate += bd["amount"]
-
-    dmg_dealt = 0
-    for bd in [i for i in all_bd if i["type"] == "dmg_dealt" and not i.get("condition")]:
-        if "other" in bd and bd["other"] == "more":
-            dmg_dealt += bd["amount"] * enemy_number
-        else:
-            dmg_dealt += bd["amount"]
-
-    dmg_dealt_boss = dmg_dealt + sum(bd["amount"] for bd in all_bd if bd["type"] == "dmg_dealt" and bd.get("condition") == "break_200" and boss_break >= 200)
-    dmg_dealt_enemy = dmg_dealt + sum(bd["amount"] for bd in all_bd if bd["type"] == "dmg_dealt" and bd.get("condition") == "break_200" and enemy_break >= 200)
-
-    dmg_taken = 0
-    for bd in [i for i in all_bd if i["type"] == "dmg_taken"]:
-        dmg_taken += bd["amount"]
-
-    ele_advantage_dmg = 0
-    for bd in [i for i in all_bd if i["type"] == "ele_advantage_dmg"]:
-        ele_advantage_dmg += bd["amount"]
+    buffs = collect_buffs(all_bd, enemy_number, boss_break, enemy_break)
 
     weapon_atk = weapon["atk"] if weapon else 0
-    base_atk_total = attacker_base_atk + weapon_atk
-    total_atk = base_atk_total * (1 + atk_buff_value)
-    ele_res = 0
+    base_atk = attacker_base_atk + weapon_atk
+    total_atk = base_atk * buffs["atk_multiplier"]
 
-    ult_multiplier = attacker["ultimate"][0]["power"]
-    extra_multiplier = 0
-    other = attacker["ultimate"][0]["meta"].get("other")
+    crit_rate = min(buffs["crit_rate"], 1.0)
+    crit_dmg = buffs["crit_dmg"]
+    crit_factor = crit_dmg * crit_rate + (1 - crit_rate)
 
-    if other == "random":
-        extra_multiplier = attacker["ultimate"][0]["meta"]["power"] / enemy_number
-    elif other == "less":
-        extra_multiplier = attacker["ultimate"][0]["meta"]["power"] * (5 - enemy_number)
+    hits = attacker["ultimate"][0]["meta"]["hits"]
 
-    if other == "less":
-        target_number = enemy_number
-    else:
-        target_number = min(attacker["ultimate"][0]["meta"].get("target", 1), enemy_number)
+    total_expected = 0
+    total_theory = 0
 
-    boss_dmg = calculate_damage(ult_multiplier + extra_multiplier, base_atk_total, total_atk, boss_defence * def_debuff_value, dmg_dealt_boss, dmg_taken, ele_res, ele_advantage_dmg, boss_break)
+    for hit in hits:
+        boss_dmg, enemy_dmg, target = compute_hit_damage(
+            hit, base_atk, total_atk, buffs,
+            enemy_number, boss_defence, enemy_defence, boss_break, enemy_break
+        )
+        total_expected += boss_dmg * crit_factor + enemy_dmg * crit_factor * (target - 1)
+        total_theory += boss_dmg * crit_dmg + enemy_dmg * crit_dmg * (target - 1)
 
-    if other == "less":
-        enemy_dmg = calculate_damage(extra_multiplier, base_atk_total, total_atk, enemy_defence * def_debuff_value, dmg_dealt_enemy, dmg_taken, ele_res, ele_advantage_dmg, enemy_break)
-    else:
-        enemy_dmg = calculate_damage(ult_multiplier + extra_multiplier, base_atk_total, total_atk, enemy_defence * def_debuff_value, dmg_dealt_enemy, dmg_taken, ele_res, ele_advantage_dmg, enemy_break)
+    return total_expected, total_theory
 
-    expected = boss_dmg * (crit_dmg * crit_rate + (1 - crit_rate)) + enemy_dmg * (crit_dmg * crit_rate + (1 - crit_rate)) * (target_number - 1)
-    theory = boss_dmg * crit_dmg + enemy_dmg * crit_dmg * (target_number - 1)
-
-    return expected, theory
 
 roster = load_characters("characters.json")
 weapons = load_weapons("weapons.json")
@@ -234,8 +269,6 @@ with tab2:
             party_names = party_names_base | set(combo)
             supporters = [roster[n] for n in combo]
             supporter_totsus = [registered_supporters[n]["totsu"] for n in combo]
-            padded_supporters = supporters + [None] * (4 - len(supporters))
-            padded_totsus = supporter_totsus + [0] * (4 - len(supporter_totsus))
 
             sa_candidates_names = [
                 n for n in roster
@@ -254,7 +287,7 @@ with tab2:
                 for sa_idx, sa_bds in enumerate(sa_candidates):
                     expected, theory = compute_expected_damage(
                         attacker, atk_data["totsu"], atk_data["base_atk"],
-                        padded_supporters, padded_totsus,
+                        supporters, supporter_totsus,
                         sa_bds if sa_bds else [],
                         weapon,
                         enemy_number, boss_break, boss_defence, enemy_break, enemy_defence
@@ -280,6 +313,7 @@ with tab2:
         col_a.metric("期待値", f"{result['expected']:,.0f}")
         col_b.metric("理論値", f"{result['theory']:,.0f}")
         st.divider()
+
     st.subheader("キャラクター別最高ダメージ")
     for atk_name in registered_attackers:
         chara_results = [r for r in results if r["label"].startswith(atk_name)]
@@ -301,4 +335,3 @@ with tab3:
         )
         compressed = base64.b64encode(save_data.encode()).decode()
         st.text_area("セーブデータ（コピーして保存）", value=compressed, height=68)
-
