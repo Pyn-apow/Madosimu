@@ -276,7 +276,7 @@ with tab3:
     load_input = st.text_area("ロードデータ（ペーストしてロード）", height=68, key="load_input")
     if st.button("ロードする"):
         try:
-            decoded = base64.b64decode(load_input.encode()).decode()
+            decoded = base64.b64decode(load_input.strip().encode()).decode()
             loaded = json.loads(decoded)
             for name, data in loaded.items():
                 if name in roster:
@@ -284,7 +284,11 @@ with tab3:
                     st.session_state.registered[name] = {"totsu": data["totsu"], "role": role}
                     if role == "attacker":
                         st.session_state.registered[name]["base_atk"] = data.get("base_atk", 0)
+                    st.session_state[f"own_{name}"] = True
+                    st.session_state[f"totsu_{name}"] = data["totsu"]
+                    if role == "attacker":
+                        st.session_state[f"atk_{name}"] = data.get("base_atk", 0)
             st.success("ロードしました！")
             st.rerun()
-        except:
-            st.error("データが正しくありません。")
+        except Exception as e:
+            st.error(f"データが正しくありません。{e}")
