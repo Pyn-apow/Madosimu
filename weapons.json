@@ -1,0 +1,31 @@
+[
+  {
+    "name": "歩めぬ未来を見送って",
+    "atk": 403,
+    "buff_debuffs": [
+      {"type": "crit_rate", "amount": 0.15}
+    ]
+  },
+  {
+    "name": "私、ひとりぼっちじゃないもの",
+    "atk": 375,
+    "buff_debuffs": [
+      {"type": "dmg_dealt", "amount": 0.2}
+    ],
+    "condition": "dark"
+  },
+  {
+    "name": "人魚姫の夢",
+    "atk": 433,
+    "buff_debuffs": [
+      {"type": "crit_dmg", "amount": 0.225}
+    ]
+  },
+  {
+    "name": "救世の使徒",
+    "atk": 356,
+    "buff_debuffs": [
+      {"type": "atk", "amount": 0.2}
+    ]
+  }
+]

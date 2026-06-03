@@ -2,6 +2,7 @@
   {
     "name": "悪魔ほむら",
     "role":"attacker",
+    "element":"dark",
     "ultimate": [
         {
         "power": 2.6,
@@ -93,6 +94,7 @@
     {
     "name": "ホーリーマミ",
     "role":"attacker",
+    "element":"dark",
     "ultimate": [
         {
         "power": 2.6,
