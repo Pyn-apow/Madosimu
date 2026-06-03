@@ -60,7 +60,7 @@ chara5 = roster.get(bd4) if bd4 != "なし" else None
 all_bd = []
 for i in [chara1,chara2,chara3,chara4,chara5]:
     all_bd += get_all_buff_debuffs(i) if i is not None else []
-
+st.write(all_bd)
 atk_buff_value = 0
 atk_buff = [i for i in all_bd if i["type"] == "atk"]
 for i in atk_buff:
