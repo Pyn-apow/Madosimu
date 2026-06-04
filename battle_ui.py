@@ -221,6 +221,10 @@ if "pending_load" in st.session_state:
     st.success("ロードしました！")
 
 with st.sidebar:
+    with st.sidebar:
+    if st.button("キャッシュクリア"):
+        st.cache_data.clear()
+        st.rerun()
     st.subheader("敵の設定")
     enemy_number = st.radio("敵の数", [1, 2, 3, 4, 5], horizontal=True)
     max_supporters = st.radio("バッファー人数", [0, 1, 2, 3, 4], horizontal=True)
