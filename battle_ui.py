@@ -244,7 +244,7 @@ with tab1:
                 col1, col2 = st.columns(2)
                 base_atk = col1.number_input("基礎攻撃力", min_value=0, max_value=9999, value=st.session_state.registered.get(name, {}).get("base_atk", 0), key=f"atk_{name}")
                 totsu = col2.number_input("限界突破数", min_value=0, max_value=5, step=1, value=st.session_state.registered.get(name, {}).get("totsu", 0), key=f"totsu_{name}")
-                st.session_state.registered[name] = {"base_atk": base_atk, "totsu": totsu, "role": "attacker"}
+                st.session_state.registered[name] = {"base_atk": int(base_atk), "totsu": int(totsu), "role": "attacker"}
             else:
                 st.session_state.registered.pop(name, None)
 
@@ -254,7 +254,7 @@ with tab1:
             owned = st.checkbox("所持している", key=f"own_{name}")
             if owned:
                 totsu = st.number_input("限界突破数", min_value=0, max_value=5, step=1, value=st.session_state.registered.get(name, {}).get("totsu", 0), key=f"totsu_{name}")
-                st.session_state.registered[name] = {"totsu": totsu, "role": "supporter"}
+                st.session_state.registered[name] = {"totsu": int(totsu), "role": "supporter"}
             else:
                 st.session_state.registered.pop(name, None)
 
