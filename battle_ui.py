@@ -181,10 +181,36 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
         else:
             total_theory += boss_dmg * crit_dmg + enemy_dmg * crit_dmg * (target - 1)
 
-    total_hit_count = len(hits)
-    theory_prob = crit_rate ** total_hit_count
-    if random_hit_count > 0 and enemy_number > 1:
-        theory_prob *= (1 / enemy_number) ** random_hit_count
+    theory_prob = 1.0
+    for hit in hits:
+        scale = hit.get("scale")
+        count = hit.get("count", 1)
+        if scale == "less":
+            extra = 5 - enemy_number
+            theory_prob *= crit_rate ** (extra * enemy_number)
+        elif scale == "random" and enemy_number > 1:
+            power = hit["power"]
+            if isinstance(power, list):
+                power = power[attacker_totsu]
+            boss_dmg_check = calculate_damage(
+                power / enemy_number, base_atk, total_atk,
+                boss_defence * buffs["def_debuff"],
+                buffs["dmg_dealt_boss"], buffs["dmg_taken"],
+                0, buffs["ele_advantage_dmg"], boss_break
+            )
+            enemy_dmg_check = calculate_damage(
+                power / enemy_number, base_atk, total_atk,
+                enemy_defence * buffs["def_debuff"],
+                buffs["dmg_dealt_enemy"], buffs["dmg_taken"],
+                0, buffs["ele_advantage_dmg"], enemy_break
+            )
+            if boss_dmg_check >= enemy_dmg_check:
+                theory_prob *= (crit_rate / enemy_number) ** count
+            else:
+                theory_prob *= (crit_rate * (enemy_number - 1) / enemy_number) ** count
+        else:
+            target = enemy_number if hit["target"] == -1 else min(hit["target"], enemy_number)
+            theory_prob *= crit_rate ** target
 
     return total_expected, total_theory, theory_prob
 
