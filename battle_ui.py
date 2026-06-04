@@ -17,11 +17,12 @@ def load_weapons(filepath: str) -> list:
         return json.load(f)
 
 def format_prob(p: float) -> str:
-    if p >= 0.0001:
-        return f"{p*100:.2f}%"
     import math
-    exp = math.floor(math.log10(p * 100))
-    base = p * 100 / (10 ** exp)
+    pct = p * 100
+    if pct >= 1.0:
+        return f"{pct:.2f}%"
+    exp = math.floor(math.log10(pct))
+    base = pct / (10 ** exp)
     return f"{base:.2f}×10^{exp}%"
 
 def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
