@@ -39,8 +39,10 @@ def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
     for bd in all_bd:
         if totsu < bd.get("totsu", 0):
             continue
+        bd = dict(bd)
+        if isinstance(bd["amount"], list):
+            bd["amount"] = bd["amount"][totsu]
         if multiplier != 1.0:
-            bd = dict(bd)
             bd["amount"] = bd["amount"] * multiplier
         result.append(bd)
     return result
