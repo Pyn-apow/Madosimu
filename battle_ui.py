@@ -221,7 +221,6 @@ if "pending_load" in st.session_state:
     st.success("ロードしました！")
 
 with st.sidebar:
-    with st.sidebar:
     if st.button("キャッシュクリア"):
         st.cache_data.clear()
         st.rerun()
