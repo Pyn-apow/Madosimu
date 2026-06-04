@@ -153,20 +153,19 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
         boss_dmg, enemy_dmg, target, _ = compute_hit_damage(hit, base_atk, total_atk, buffs, enemy_number, boss_defence, enemy_defence, boss_break, enemy_break, attacker_totsu)
 
         if scale == "random":
-            total_expected += (boss_dmg * crit_factor + enemy_dmg * crit_factor * (target - 1)) * count
-            best_dmg = max(boss_dmg, enemy_dmg)
-            total_theory += best_dmg * crit_dmg * count
+            count = hit.get("count", 1)
             if enemy_number > 1:
-                power = hit["power"]
-                if isinstance(power, list):
-                    power = power[attacker_totsu]
-                boss_dmg_check = calculate_damage(power / enemy_number, base_atk, total_atk, boss_defence * buffs["def_debuff"], buffs["dmg_dealt_boss"], buffs["dmg_taken"], 0, buffs["ele_advantage_dmg"], boss_break)
-                enemy_dmg_check = calculate_damage(power / enemy_number, base_atk, total_atk, enemy_defence * buffs["def_debuff"], buffs["dmg_dealt_enemy"], buffs["dmg_taken"], 0, buffs["ele_advantage_dmg"], enemy_break)
-                if boss_dmg_check >= enemy_dmg_check:
+                expected_per_hit = boss_dmg * (1/enemy_number) + enemy_dmg * ((enemy_number-1)/enemy_number)
+                total_expected += expected_per_hit * crit_factor * count
+                if boss_dmg >= enemy_dmg:
+                    total_theory += boss_dmg * crit_dmg * count
                     theory_prob *= (crit_rate / enemy_number) ** count
                 else:
+                    total_theory += enemy_dmg * crit_dmg * count * enemy_number
                     theory_prob *= (crit_rate * (enemy_number - 1) / enemy_number) ** count
             else:
+                total_expected += boss_dmg * crit_factor * count
+                total_theory += boss_dmg * crit_dmg * count
                 theory_prob *= crit_rate ** count
         else:
             total_expected += boss_dmg * crit_factor + enemy_dmg * crit_factor * (target - 1)

@@ -45,6 +45,25 @@
     "support_abilities": [{"condition": "buffer", "buff_debuffs": []}]
   },
   {
+    "name": "クリスマスさやか", "role": "buffer", "element": "water",
+    "ultimate": [{"meta": {"cost_mp": 75, "buff_debuffs": [
+      {"target": 5, "type": "atk", "amount": [0.13,0.13,0.13,0.16,0.16,0.20]},
+      {"target": 5, "type": "dmg_dealt", "amount": [0.13,0.13,0.13,0.16,0.16,0.20]},
+      {"target": 1, "type": "atk", "amount": 0.15}
+    ]}}],
+    "battle_skills": [{"meta": {"buff_debuffs": [
+      {"target": 1, "type": "ele_advantage_dmg", "amount": 0.25},
+      {"target": 1, "type": "dmg_dealt", "amount": 0.1}
+    ]}}],
+    "abilities": [{"buff_debuffs": [
+      {"target": 1, "type": "ele_advantage_dmg", "amount": 0.3, "totsu": 2}
+    ]}],
+    "support_abilities": [{"condition": "buffer", "buff_debuffs": [
+      {"target": 1, "type": "dmg_dealt", "amount": 0.1},
+      {"target": 1, "type": "atk", "amount": 0.15}
+    ]}]
+  },
+  {
     "name": "アルティメットまどか", "role": "attacker", "element": "light",
     "ultimate": [{"meta": {"cost_mp": 100,
       "hits": [
