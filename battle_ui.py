@@ -33,7 +33,15 @@ def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
         all_bd.extend(skill.get("meta", {}).get("buff_debuffs", []))
     for ability in chara.get("abilities", []):
         all_bd.extend(ability.get("buff_debuffs", []))
-    return [bd for bd in all_bd if totsu >= bd.get("totsu", 0)]
+    result = []
+    for bd in all_bd:
+        if totsu < bd.get("totsu", 0):
+            continue
+        if isinstance(bd.get("amount"), list):
+            bd = dict(bd)
+            bd["amount"] = bd["amount"][totsu]
+        result.append(bd)
+    return result
 
 def get_support_ability_bds(chara: dict, attacker_element: str, attacker_role: str) -> list:
     all_bd = []
