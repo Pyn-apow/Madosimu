@@ -228,8 +228,8 @@ with st.sidebar:
     if enemy_number == 1:
         enemy_break = 0
         enemy_defence = 0.0
-    sort_by = st.radio("ランキング基準", ["期待値", "理論値"], horizontal=True)
-    min_prob = st.slider("理論値の最低確率 (%)", min_value=0, max_value=100, value=0) / 100
+    sort_by = st.radio("ソート:ランキングの基準", ["期待値", "理論値"], horizontal=True)
+    min_prob = st.number_input("フィルター:理論値が起こり得る最低確率 (%)", min_value=0.0, max_value=100.0, value=0) / 100
  
 tab1, tab2, tab3, tab4 = st.tabs(["魔法少女登録", "ダメージシミュレーター", "セーブ・ロード", "使い方・よくある質問"])
  
@@ -244,7 +244,7 @@ with tab1:
             if owned:
                 col1, col2 = st.columns(2)
                 base_atk = col1.number_input("基礎攻撃力", min_value=0, max_value=9999, value=st.session_state.registered.get(name, {}).get("base_atk", 0), key=f"atk_{name}")
-                totsu = col2.selectbox("限界突破数", [0, 1, 2, 3, 4, 5], index=st.session_state.registered.get(name, {}).get("totsu", 0), key=f"totsu_{name}")
+                totsu = col2.number_input("限界突破数", [0, 1, 2, 3, 4, 5], index=st.session_state.registered.get(name, {}).get("totsu", 0), key=f"totsu_{name}")
                 st.session_state.registered[name] = {"base_atk": base_atk, "totsu": totsu, "role": "attacker"}
             else:
                 st.session_state.registered.pop(name, None)
@@ -254,7 +254,7 @@ with tab1:
         with st.expander(name):
             owned = st.checkbox("所持している", key=f"own_{name}")
             if owned:
-                totsu = st.selectbox("限界突破数", [0, 1, 2, 3, 4, 5], index=st.session_state.registered.get(name, {}).get("totsu", 0), key=f"totsu_{name}")
+                totsu = st.number_input("限界突破数", [0, 1, 2, 3, 4, 5], index=st.session_state.registered.get(name, {}).get("totsu", 0), key=f"totsu_{name}")
                 st.session_state.registered[name] = {"totsu": totsu, "role": "supporter"}
             else:
                 st.session_state.registered.pop(name, None)
