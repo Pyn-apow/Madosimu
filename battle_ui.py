@@ -16,6 +16,14 @@ def load_weapons(filepath: str) -> list:
     with open(filepath, "r", encoding="utf-8") as f:
         return json.load(f)
 
+def format_prob(p: float) -> str:
+    if p >= 0.0001:
+        return f"{p*100:.2f}%"
+    import math
+    exp = math.floor(math.log10(p * 100))
+    base = p * 100 / (10 ** exp)
+    return f"{base:.2f}×10^{exp}%"
+
 def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
     all_bd = []
     for ult in chara.get("ultimate", []):
@@ -332,7 +340,7 @@ with tab2:
         col_a, col_b, col_c = st.columns(3)
         col_a.metric("期待値", f"{result['expected']:,.0f}")
         col_b.metric("理論値", f"{result['theory']:,.0f}")
-        col_c.metric("理論値の確率", f"{result['theory_prob']*100:.2f}%")
+        col_c.metric("理論値の確率", format_prob(result['theory_prob']))
         st.divider()
 
     st.subheader("キャラクター別最高ダメージ")
@@ -345,7 +353,7 @@ with tab2:
                 col_a, col_b, col_c = st.columns(3)
                 col_a.metric("期待値", f"{best['expected']:,.0f}")
                 col_b.metric("理論値", f"{best['theory']:,.0f}")
-                col_c.metric("理論値の確率", f"{best['theory_prob']*100:.2f}%")
+                col_c.metric("理論値の確率", format_prob(best['theory_prob']))
 
 with tab3:
     st.header("セーブ・ロード")
