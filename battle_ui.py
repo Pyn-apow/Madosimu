@@ -154,16 +154,17 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
             count = hit.get("count", 1)
             if enemy_number > 1:
                 expected_per_hit = boss_dmg * (1/enemy_number) + enemy_dmg * ((enemy_number-1)/enemy_number)
-                total_expected += expected_per_hit * crit_factor * count
+                total_expected += expected_per_hit * crit_factor
+                
                 if boss_dmg >= enemy_dmg:
-                    total_theory += boss_dmg * crit_dmg * count
+                    total_theory += boss_dmg * crit_dmg
                     theory_prob *= (crit_rate / enemy_number) ** count
                 else:
-                    total_theory += enemy_dmg * crit_dmg * count
-                    theory_prob *= (crit_rate / enemy_number) ** count * (enemy_number - 1)
+                    total_theory += enemy_dmg * crit_dmg
+                    theory_prob *= (crit_rate * (enemy_number - 1) / enemy_number) ** count
             else:
-                total_expected += boss_dmg * crit_factor * count
-                total_theory += boss_dmg * crit_dmg * count
+                total_expected += boss_dmg * crit_factor
+                total_theory += boss_dmg * crit_dmg
                 theory_prob *= crit_rate ** count
         else:
             total_expected += boss_dmg * crit_factor + enemy_dmg * crit_factor * (target - 1)
