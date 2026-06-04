@@ -28,6 +28,8 @@ def format_prob(p: float) -> str:
     return f"{base:.2f}×10^{exp}%"
 
 def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
+    role = chara.get("role", "") 
+    
     all_bd = []
     for ult in chara.get("ultimate", []):
         all_bd.extend(ult.get("meta", {}).get("buff_debuffs", []))
@@ -35,14 +37,30 @@ def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
         all_bd.extend(skill.get("meta", {}).get("buff_debuffs", []))
     for ability in chara.get("abilities", []):
         all_bd.extend(ability.get("buff_debuffs", []))
+        
     result = []
     for bd in all_bd:
         if totsu < bd.get("totsu", 0):
             continue
-        if isinstance(bd.get("amount"), list):
-            bd = dict(bd)
-            bd["amount"] = bd["amount"][totsu]
-        result.append(bd)
+            
+        bd_copy = dict(bd)
+        amount = bd_copy.get("amount")
+        if isinstance(amount, list):
+            amount = amount[totsu]
+        if totsu >= 4:
+            bd_type = bd_copy.get("type")
+            
+            if role == "buffer":
+                if bd_type in ["atk", "crit_dmg", "crit_rate", "dmg_dealt", "ele_advantage_dmg"]:
+                    amount *= 1.5
+                    
+            elif role == "debuffer":
+                if bd_type in ["def", "dmg_taken"]:
+                    amount *= 1.3
+                    
+        bd_copy["amount"] = amount
+        result.append(bd_copy)
+        
     return result
 
 def get_support_ability_bds(chara: dict, attacker_element: str, attacker_role: str) -> list:

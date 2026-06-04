@@ -1,5 +1,18 @@
 [
   {
+    "name": "五十鈴れん", "role": "debuffer", "element": "void",
+    "ultimate": [{"meta": {"cost_mp": 75, "buff_debuffs": [
+      {"target": 3, "type": "dmg_taken", "amount": [0.33,0.33,0.33,0.36,0.36,0.40]}
+    ]}}],
+    "battle_skills": [{"meta": {"buff_debuffs": [
+      {"target": 3, "type": "def", "amount": 0.1}
+    ]}}],
+    "abilities": [{"buff_debuffs": [
+      {"target": 3, "type": "def", "amount": 0.2}
+    ]}],
+    "support_abilities": [{"condition": "debuffer", "buff_debuffs": []}]
+  },
+  {
     "name": "巴マミ", "role": "buffer", "element": "wood",
     "ultimate": [{"meta": {"cost_mp": 75, "buff_debuffs": [
       {"target": 5, "type": "dmg_dealt", "amount": [0.33,0.33,0.33,0.36,0.36,0.40]}
