@@ -156,12 +156,17 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
                 expected_per_hit = boss_dmg * (1/enemy_number) + enemy_dmg * ((enemy_number-1)/enemy_number)
                 total_expected += expected_per_hit * crit_factor
                 
-                if boss_dmg >= enemy_dmg:
+                if boss_dmg > enemy_dmg:
                     total_theory += boss_dmg * crit_dmg
                     theory_prob *= (crit_rate / enemy_number) ** count
-                else:
+                    
+                elif enemy_dmg > boss_dmg:
                     total_theory += enemy_dmg * crit_dmg
                     theory_prob *= (crit_rate * (enemy_number - 1) / enemy_number) ** count
+                    
+                else:
+                    total_theory += boss_dmg * crit_dmg
+                    theory_prob *= crit_rate ** count
             else:
                 total_expected += boss_dmg * crit_factor
                 total_theory += boss_dmg * crit_dmg
@@ -365,8 +370,10 @@ with tab4:
     st.write("3. ダメージシミュレータータブでランキングを見る")
     st.subheader("Q&A")
     st.write("Q. 対応している魔法少女・ポートレイトが少ないです。")
-    st.write("A. 随時増やしていきます。リクエストをいただければ早めに実装する可能性もあります。")
+    st.write("A. 随時増やしていきます。リクエストをいただければ早めに実装する可能性もあります。  \n")
     st.write("Q. 必殺技だけでなく、スキルや追撃も考慮しないと強さが比較できないと思います。")
-    st.write("A. 総合的な強さに関してはその通りです。しかしこのシミュレーターは必殺技の最高ダメージを求めるという目的で作られています。")
+    st.write("A. 総合的な強さに関してはその通りです。しかしこのシミュレーターは必殺技の最高ダメージを求めるという目的で作られています。  \n")
+    st.write("Q. 理論値の確率に天文学的な数字が出ます。なぜですか？")
+    st.write("A. すべての攻撃でクリティカル、かつランダム攻撃は一番ダメージが出る敵にすべて当たる確率だからです。  \n")
     st.write("Q. このシミュレーターって何に使うんですか?")
-    st.write("A. 決まってはいないですが、スコアアタックなどに活用できるのではないでしょうか。")
+    st.write("A. 決まってはいないですが、スコアアタックなどに活用できるのではないでしょうか。  \n")
