@@ -1,5 +1,20 @@
 [
   {
+    "name": "クリスマス杏子", "role": "debuffer", "element": "fire",
+    "ultimate": [{"meta": {"cost_mp": 75, "buff_debuffs": [
+      {"target": 3, "type": "def", "amount": [0.16,0.16,0.16,0.18,0.18,0.20]}
+    ]}}],
+    "battle_skills": [{"meta": {"buff_debuffs": [
+      {"target": 3, "type": "ele_res", "amount": 0.2},
+      {"target": 3, "type":"dmg_taken", "amount": 0.2},
+      {"target": 3, "type":"dmg_taken", "amount": 0.2}
+    ]}}],
+    "abilities": [{"buff_debuffs": [
+      {"target": 3, "type": "def", "amount": 0.2}
+    ]}],
+    "support_abilities": [{"condition": "debuffer", "buff_debuffs": []}]
+  },
+  {
     "name": "五十鈴れん", "role": "debuffer", "element": "void",
     "ultimate": [{"meta": {"cost_mp": 75, "buff_debuffs": [
       {"target": 3, "type": "dmg_taken", "amount": [0.33,0.33,0.33,0.36,0.36,0.40]}
