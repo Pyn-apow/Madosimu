@@ -113,8 +113,6 @@ def compute_hit_damage(hit, base_atk, total_atk, buffs, enemy_number, boss_defen
 
     if scale == "less":
         multiplier = power * (5 - enemy_number)
-    elif scale == "random":
-        multiplier = power / enemy_number if enemy_number > 1 else power
     else:
         multiplier = power
 
@@ -161,8 +159,8 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
                     total_theory += boss_dmg * crit_dmg * count
                     theory_prob *= (crit_rate / enemy_number) ** count
                 else:
-                    total_theory += enemy_dmg * crit_dmg * count * enemy_number
-                    theory_prob *= (crit_rate * (enemy_number - 1) / enemy_number) ** count
+                    total_theory += enemy_dmg * crit_dmg * count
+                    theory_prob *= (crit_rate / enemy_number) ** count * (enemy_number - 1)
             else:
                 total_expected += boss_dmg * crit_factor * count
                 total_theory += boss_dmg * crit_dmg * count
