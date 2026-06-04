@@ -174,7 +174,7 @@
       {"target": 1, "type": "atk", "amount": 0.2, "totsu": 2}
     ]}],
     "support_abilities": [{"condition": "water", "buff_debuffs": [
-      {"target": 1, "type": "dealt_dmg", "amount": 0.15}
+      {"target": 1, "type": "dmg_dealt", "amount": 0.15}
     ]}]
   }
 ]
