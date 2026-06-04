@@ -164,7 +164,7 @@
       "hits": [
         {"power": [2.16,2.16,2.16,2.46,2.46,3.15], "target": 3},
         {"power": [0.75,0.75,0.75,0.84,0.84,1.05], "target": 1}
-      ]]
+      ]
     }}],
     "battle_skills": [{"meta": {"buff_debuffs": [
       {"target": 1, "type": "dmg_dealt", "amount": 0.25}
