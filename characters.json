@@ -157,5 +157,24 @@
       {"target": 1, "type": "dmg_dealt", "amount": 0.05, "other": "more"},
       {"target": 1, "type": "dmg_dealt", "amount": -0.05}
     ]}]
+  },
+  {
+    "name": "暁美ほむら", "role": "attacker", "element": "dark",
+    "ultimate": [{"meta": {"cost_mp": 90,
+      "hits": [
+        {"power": [2.16,2.16,2.16,2.46,2.46,3.15], "target": 3},
+        {"power": [0.75,0.75,0.75,0.84,0.84,1.05], "target": 1}
+      ]]
+    }}],
+    "battle_skills": [{"meta": {"buff_debuffs": [
+      {"target": 1, "type": "dmg_dealt", "amount": 0.25}
+    ]}}],
+    "abilities": [{"buff_debuffs": [
+      {"target": 1, "type": "atk", "amount": 0.2, "totsu": 1},
+      {"target": 1, "type": "atk", "amount": 0.2, "totsu": 2}
+    ]}],
+    "support_abilities": [{"condition": "water", "buff_debuffs": [
+      {"target": 1, "type": "dealt_dmg", "amount": 0.15}
+    ]}]
   }
 ]
