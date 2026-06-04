@@ -3,7 +3,7 @@ import streamlit as st
 from itertools import combinations
 import base64
 
-st.set_page_config(page_title="魔法少女比較シミュレーター", layout="wide")
+st.set_page_config(page_title="魔法少女必殺技ダメージ比較シミュレーター", layout="wide")
 
 @st.cache_data
 def load_characters(filepath: str) -> dict:
@@ -237,7 +237,7 @@ with st.sidebar:
         enemy_defence = 0.0
     sort_by = st.radio("ランキング基準", ["期待値", "理論値"], horizontal=True)
 
-tab1, tab2, tab3 = st.tabs(["魔法少女登録", "ダメージシミュレーター", "セーブ・ロード"])
+tab1, tab2, tab3, tab4 = st.tabs(["魔法少女登録", "ダメージシミュレーター", "セーブ・ロード", "使い方・よくある質問"])
 
 with tab1:
     st.header("所持魔法少女の登録")
@@ -361,3 +361,17 @@ with tab3:
         )
         compressed = base64.b64encode(save_data.encode()).decode()
         st.text_area("セーブデータ（コピーして保存）", value=compressed, height=68)
+
+with tab4:
+    st.header("使い方・よくある質問")
+    st.subheader("使い方")
+    st.write("①魔法少女登録タブで、手持ちのアタッカー・バッファー・デバッファーを登録")
+    st.write("②左側の設定で条件を設定（敵の防御力やブレイクボーナスは、海外wikiを参照することをお勧めします。）")
+    st.write("③ダメージシミュレータータブでランキングを見る")
+    st.subheader("Q&A")
+    st.write("Q.対応している魔法少女・ポートレイトが少ないです。")
+    st.write("A.随時増やしていきます。リクエストをいただければ早めに実装する可能性もあります。")
+    st.write("Q.必殺技だけでなく、スキルや追撃も考慮しないと強さが比較できないと思います。")
+    st.write("A.総合的な強さに関してはその通りです。しかしこのシミュレーターは必殺技の最高ダメージをもとめるという目的で作られています。")
+     st.write("Q.このシミュレーターって何に使うんですか？")
+    st.write("A.決まってはいないですが、スコアアタックなどに活用できるのではないでしょうか。")
