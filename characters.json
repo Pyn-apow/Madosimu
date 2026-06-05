@@ -57,6 +57,24 @@
     ]}],
     "support_abilities": [{"condition": "buffer", "buff_debuffs": []}]
   },
+    {
+    "name": "晴れ着まどか", "role": "buffer", "element": "light",
+    "ultimate": [{"meta": {"cost_mp": 100, "buff_debuffs": [
+      {"target": 5, "type": "crit_dmg", "amount": [0.43,0.43,0.43,0.46,0.46,0.50]},
+      {"target": 5, "type": "atk", "amount": [0.23,0.23,0.23,0.26,0.26,0.30]}
+    ]}}], 
+    "battle_skills": [{"meta": {"buff_debuffs": [
+      {"target": 5, "type": "crit_dmg", "amount": 0.3},
+      {"target": 5, "type": "crit_rate", "amount": 0.25}
+    ]}}],
+    "abilities": [{"buff_debuffs": [
+      {"target": 5, "type": "crit_rate", "amount": 0.2},
+      {"target": 5, "type": "ele_advantage_dmg", "amount": 0.15},
+      {"target": 5, "type": "crit_rate", "amount": 0.1, "totsu": 2},
+      {"target": 5, "type": "crit_dmg", "amount": 0.15, "totsu": 2}
+    ]}],
+    "support_abilities": [{"condition": "buffer", "buff_debuffs": []}]
+  },
   {
     "name": "愛生まばゆ", "role": "buffer", "element": "light",
     "ultimate": [{"meta": {"cost_mp": 75, "buff_debuffs": [
