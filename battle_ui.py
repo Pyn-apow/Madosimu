@@ -249,28 +249,6 @@ with st.sidebar:
     sort_by = st.radio("ソート:ランキングの基準", ["期待値", "理論値"], horizontal=True)
     min_prob = st.number_input("フィルター:理論値が起こり得る最低確率 (%)", min_value=0.0, max_value=100.0, value=0.0) / 100
 
-    st.subheader("計算対象フィルター")
-
-    st.markdown("**属性**")
-    element_filter = {}
-    for ele in ALL_ELEMENTS:
-        element_filter[ele] = st.checkbox(ele, value=True, key=f"ele_{ele}")
-
-    st.markdown("**ロール**")
-    role_filter = {}
-    for role in ALL_ROLES:
-        role_filter[role] = st.checkbox(role, value=True, key=f"role_{role}")
-
-    st.markdown("**キャラクター個別**")
-    chara_filter = {}
-    for name, c in roster.items():
-        ele = c.get("element", "")
-        role = c.get("role", "")
-        if element_filter.get(ele, True) and role_filter.get(role, True):
-            chara_filter[name] = st.checkbox(name, value=True, key=f"chara_{name}")
-        else:
-            chara_filter[name] = False
-
 tab1, tab2, tab3, tab4 = st.tabs(["魔法少女登録", "ダメージシミュレーター", "セーブ・ロード", "使い方・よくある質問"])
 
 with tab1:
@@ -301,99 +279,125 @@ with tab1:
 with tab2:
     st.header("ダメージシミュレーター")
 
-    registered_attackers = {
-        n: v for n, v in st.session_state.registered.items()
-        if v["role"] == "attacker" and chara_filter.get(n, True)
-    }
-    registered_supporters = {
-        n: v for n, v in st.session_state.registered.items()
-        if v["role"] == "supporter" and chara_filter.get(n, True)
-    }
+    col_filter, col_result = st.columns([1, 3])
 
-    if not registered_attackers:
-        st.warning("タブ①でアタッカーを登録してください。")
+    with col_filter:
+        st.subheader("使用魔法少女フィルター")
 
-    results = []
-    supporter_names = list(registered_supporters.keys())
-    supporter_combos = []
-    for r in range(max_supporters + 1):
-        supporter_combos += list(combinations(supporter_names, r))
+        element_filter = {}
+        st.markdown("属性")
+        for ele in ALL_ELEMENTS:
+            element_filter[ele] = st.checkbox(ele, value=True, key=f"ele_{ele}")
 
-    for atk_name, atk_data in registered_attackers.items():
-        attacker = roster[atk_name]
-        attacker_element = attacker.get("element", "")
-        attacker_role = attacker.get("role", "")
-        party_names_base = {atk_name}
-        valid_weapons = [w for w in weapons if not w.get("condition") or w.get("condition") == attacker_element]
-        weapon_candidates = [None] + valid_weapons
+        role_filter = {}
+        st.markdown("ロール")
+        for role in ALL_ROLES:
+            role_filter[role] = st.checkbox(role, value=True, key=f"role_{role}")
 
-        for combo in supporter_combos:
-            party_names = party_names_base | set(combo)
-            supporters = [roster[n] for n in combo]
-            supporter_totsus = [registered_supporters[n]["totsu"] for n in combo]
-            sa_candidates_names = [
-                n for n in roster
-                if n not in party_names and chara_filter.get(n, True) and any(
-                    sa.get("condition") in (attacker_element, attacker_role)
-                    for sa in roster[n].get("support_abilities", [])
-                )
-            ]
-            sa_candidates = [None] + [get_support_ability_bds(roster[n], attacker_element, attacker_role) for n in sa_candidates_names]
-            sa_labels = ["なし"] + sa_candidates_names
+        chara_filter = {}
+        st.markdown("魔法少女")
+        for name, c in roster.items():
+            ele = c.get("element", "")
+            role = c.get("role", "")
+            default = element_filter.get(ele, True) and role_filter.get(role, True)
+            if not default and st.session_state.get(f"chara_{name}", True):
+                st.session_state[f"chara_{name}"] = False
+            chara_filter[name] = st.checkbox(name, value=default, key=f"chara_{name}")
 
-            for weapon in weapon_candidates:
-                for sa_idx, sa_bds in enumerate(sa_candidates):
-                    expected, theory, theory_prob = compute_expected_damage(
-                        attacker, atk_data["totsu"], atk_data["base_atk"],
-                        supporters, supporter_totsus,
-                        sa_bds if sa_bds else [],
-                        weapon,
-                        enemy_number, boss_break, boss_defence, enemy_break, enemy_defence
+    with col_result:
+        registered_attackers = {
+            n: v for n, v in st.session_state.registered.items()
+            if v["role"] == "attacker" and chara_filter.get(n, True)
+        }
+        registered_supporters = {
+            n: v for n, v in st.session_state.registered.items()
+            if v["role"] == "supporter" and chara_filter.get(n, True)
+        }
+
+        if not registered_attackers:
+            st.warning("タブ①でアタッカーを登録してください。")
+
+        results = []
+        supporter_names = list(registered_supporters.keys())
+        supporter_combos = []
+        for r in range(max_supporters + 1):
+            supporter_combos += list(combinations(supporter_names, r))
+
+        for atk_name, atk_data in registered_attackers.items():
+            attacker = roster[atk_name]
+            attacker_element = attacker.get("element", "")
+            attacker_role = attacker.get("role", "")
+            party_names_base = {atk_name}
+            valid_weapons = [w for w in weapons if not w.get("condition") or w.get("condition") == attacker_element]
+            weapon_candidates = [None] + valid_weapons
+
+            for combo in supporter_combos:
+                party_names = party_names_base | set(combo)
+                supporters = [roster[n] for n in combo]
+                supporter_totsus = [registered_supporters[n]["totsu"] for n in combo]
+                sa_candidates_names = [
+                    n for n in roster
+                    if n not in party_names and chara_filter.get(n, True) and any(
+                        sa.get("condition") in (attacker_element, attacker_role)
+                        for sa in roster[n].get("support_abilities", [])
                     )
-                    parts = [atk_name]
-                    if combo:
-                        parts.append("、".join(combo))
-                    if weapon:
-                        parts.append(f"武器:{weapon['name']}")
-                    if sa_bds:
-                        parts.append(f"SA:{sa_labels[sa_idx]}")
-                    results.append({"label": " + ".join(parts), "expected": expected, "theory": theory, "theory_prob": theory_prob})
+                ]
+                sa_candidates = [None] + [get_support_ability_bds(roster[n], attacker_element, attacker_role) for n in sa_candidates_names]
+                sa_labels = ["なし"] + sa_candidates_names
 
-    results.sort(key=lambda x: x["expected"] if sort_by == "期待値" else x["theory"], reverse=True)
-    filtered_results = [r for r in results if r["theory_prob"] >= min_prob]
-    top3 = filtered_results[:3]
+                for weapon in weapon_candidates:
+                    for sa_idx, sa_bds in enumerate(sa_candidates):
+                        expected, theory, theory_prob = compute_expected_damage(
+                            attacker, atk_data["totsu"], atk_data["base_atk"],
+                            supporters, supporter_totsus,
+                            sa_bds if sa_bds else [],
+                            weapon,
+                            enemy_number, boss_break, boss_defence, enemy_break, enemy_defence
+                        )
+                        parts = [atk_name]
+                        if combo:
+                            parts.append("、".join(combo))
+                        if weapon:
+                            parts.append(f"武器:{weapon['name']}")
+                        if sa_bds:
+                            parts.append(f"SA:{sa_labels[sa_idx]}")
+                        results.append({"label": " + ".join(parts), "expected": expected, "theory": theory, "theory_prob": theory_prob})
 
-    st.subheader("計算結果(上位3件)")
-    medals = ["🥇", "🥈", "🥉"]
-    for rank, result in enumerate(top3):
-        st.markdown(f"### {medals[rank]} {result['label']}")
-        if sort_by == "理論値":
-            col_a, col_b, col_c = st.columns(3)
-            col_a.metric("期待値", f"{result['expected']:,.0f}")
-            col_b.metric("理論値", f"{result['theory']:,.0f}")
-            col_c.metric("理論値の確率", format_prob(result['theory_prob']))
-        else:
-            col_a, col_b = st.columns(2)
-            col_a.metric("期待値", f"{result['expected']:,.0f}")
-            col_b.metric("理論値", f"{result['theory']:,.0f}")
-        st.divider()
+        results.sort(key=lambda x: x["expected"] if sort_by == "期待値" else x["theory"], reverse=True)
+        filtered_results = [r for r in results if r["theory_prob"] >= min_prob]
+        top3 = filtered_results[:3]
 
-    st.subheader("キャラクター別最高ダメージ")
-    for atk_name in registered_attackers:
-        chara_results = [r for r in filtered_results if r["label"].startswith(atk_name)]
-        if chara_results:
-            best = max(chara_results, key=lambda x: x["expected"] if sort_by == "期待値" else x["theory"])
-            with st.expander(atk_name):
-                st.write(f"**ビルド:** {best['label']}")
-                if sort_by == "理論値":
-                    col_a, col_b, col_c = st.columns(3)
-                    col_a.metric("期待値", f"{best['expected']:,.0f}")
-                    col_b.metric("理論値", f"{best['theory']:,.0f}")
-                    col_c.metric("理論値の確率", format_prob(best['theory_prob']))
-                else:
-                    col_a, col_b = st.columns(2)
-                    col_a.metric("期待値", f"{best['expected']:,.0f}")
-                    col_b.metric("理論値", f"{best['theory']:,.0f}")
+        st.subheader("計算結果(上位3件)")
+        medals = ["🥇", "🥈", "🥉"]
+        for rank, result in enumerate(top3):
+            st.markdown(f"### {medals[rank]} {result['label']}")
+            if sort_by == "理論値":
+                col_a, col_b, col_c = st.columns(3)
+                col_a.metric("期待値", f"{result['expected']:,.0f}")
+                col_b.metric("理論値", f"{result['theory']:,.0f}")
+                col_c.metric("理論値の確率", format_prob(result['theory_prob']))
+            else:
+                col_a, col_b = st.columns(2)
+                col_a.metric("期待値", f"{result['expected']:,.0f}")
+                col_b.metric("理論値", f"{result['theory']:,.0f}")
+            st.divider()
+
+        st.subheader("キャラクター別最高ダメージ")
+        for atk_name in registered_attackers:
+            chara_results = [r for r in filtered_results if r["label"].startswith(atk_name)]
+            if chara_results:
+                best = max(chara_results, key=lambda x: x["expected"] if sort_by == "期待値" else x["theory"])
+                with st.expander(atk_name):
+                    st.write(f"**ビルド:** {best['label']}")
+                    if sort_by == "理論値":
+                        col_a, col_b, col_c = st.columns(3)
+                        col_a.metric("期待値", f"{best['expected']:,.0f}")
+                        col_b.metric("理論値", f"{best['theory']:,.0f}")
+                        col_c.metric("理論値の確率", format_prob(best['theory_prob']))
+                    else:
+                        col_a, col_b = st.columns(2)
+                        col_a.metric("期待値", f"{best['expected']:,.0f}")
+                        col_b.metric("理論値", f"{best['theory']:,.0f}")
 
 with tab3:
     st.header("セーブ・ロード")
@@ -418,5 +422,5 @@ with tab4:
     st.write("A. 総合的な強さに関してはその通りです。しかしこのシミュレーターは必殺技の最高ダメージを求めるという目的で作られています。  \n")
     st.write("Q. 理論値の確率に天文学的な数字が出ます。なぜですか？")
     st.write("A. すべての攻撃でクリティカル、かつランダム攻撃は一番ダメージが出る敵にすべて当たる確率だからです。  \n")
-    st.write("Q. このシミュレーターって何に使うんですか?")
-    st.write("A. 決まってはいないですが、スコアアタックなどに活用できるのではないでしょうか。  \n")
+    st.write("Q. どの魔法少女が一番好きですか？")
+    st.write("A. 美樹さやかです。  \n")
