@@ -65,15 +65,16 @@
     ]}}], 
     "battle_skills": [{"meta": {"buff_debuffs": [
       {"target": 5, "type": "crit_dmg", "amount": 0.3},
-      {"target": 5, "type": "crit_rate", "amount": 0.25}
+      {"target": 5, "type": "crit_rate", "amount": 0.25},
+      {"target": 5, "type": "crit_rate", "amount": 0.1,"conditon":"light"}
     ]}}],
     "abilities": [{"buff_debuffs": [
-      {"target": 5, "type": "crit_rate", "amount": 0.2},
-      {"target": 5, "type": "ele_advantage_dmg", "amount": 0.15},
-      {"target": 5, "type": "crit_rate", "amount": 0.1, "totsu": 2},
-      {"target": 5, "type": "crit_dmg", "amount": 0.15, "totsu": 2}
+      {"target": 5, "type": "atk", "amount": 0.2},
+      {"target": 5, "type": "atk", "amount": 0.25}
     ]}],
-    "support_abilities": [{"condition": "buffer", "buff_debuffs": []}]
+    "support_abilities": [{"condition": "buffer", "buff_debuffs": [
+      {"target": 5, "type": "crit_rate", "amount": 0.05},
+      {"target": 5, "type": "crit_dmg", "amount": 0.15}]}]
   },
   {
     "name": "愛生まばゆ", "role": "buffer", "element": "light",

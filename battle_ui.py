@@ -28,8 +28,7 @@ def format_prob(p: float) -> str:
     return f"{base:.2f}×10^{exp}%"
 
 def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
-    role = chara.get("role", "") 
-    
+    role = chara.get("role", "")
     all_bd = []
     for ult in chara.get("ultimate", []):
         all_bd.extend(ult.get("meta", {}).get("buff_debuffs", []))
@@ -37,30 +36,24 @@ def get_all_buff_debuffs(chara: dict, totsu: int) -> list:
         all_bd.extend(skill.get("meta", {}).get("buff_debuffs", []))
     for ability in chara.get("abilities", []):
         all_bd.extend(ability.get("buff_debuffs", []))
-        
     result = []
     for bd in all_bd:
         if totsu < bd.get("totsu", 0):
             continue
-            
         bd_copy = dict(bd)
         amount = bd_copy.get("amount")
         if isinstance(amount, list):
             amount = amount[totsu]
         if totsu >= 4:
             bd_type = bd_copy.get("type")
-            
             if role == "buffer":
                 if bd_type in ["atk", "crit_dmg", "crit_rate", "dmg_dealt", "ele_advantage_dmg"]:
                     amount *= 1.5
-                    
             elif role == "debuffer":
                 if bd_type in ["def", "dmg_taken"]:
                     amount *= 1.3
-                    
         bd_copy["amount"] = amount
         result.append(bd_copy)
-        
     return result
 
 def get_support_ability_bds(chara: dict, attacker_element: str, attacker_role: str) -> list:
@@ -77,7 +70,15 @@ def get_weapon_bds(weapon: dict, attacker_element: str) -> list:
         return []
     return weapon.get("buff_debuffs", [])
 
-def collect_buffs(all_bd: list, enemy_number: int, boss_break: int, enemy_break: int) -> dict:
+def collect_buffs(all_bd: list, enemy_number: int, boss_break: int, enemy_break: int, attacker_element: str, attacker_role: str) -> dict:
+    def is_valid_target(bd):
+        cond = bd.get("condition")
+        if not cond:
+            return True
+        if cond == attacker_element or cond == attacker_role:
+            return True
+        return False
+
     def sum_type(bd_type, other=None):
         total = 0
         for bd in all_bd:
@@ -87,6 +88,8 @@ def collect_buffs(all_bd: list, enemy_number: int, boss_break: int, enemy_break:
                 continue
             if other is None and bd.get("other") in ("more", "break_200"):
                 continue
+            if not is_valid_target(bd):
+                continue
             total += bd["amount"]
         return total
 
@@ -95,6 +98,8 @@ def collect_buffs(all_bd: list, enemy_number: int, boss_break: int, enemy_break:
     def_debuff = 1.0
     for bd in all_bd:
         if bd["type"] == "def":
+            if not is_valid_target(bd):
+                continue
             def_debuff *= 1 - bd["amount"]
     crit_dmg = 1.2 + sum_type("crit_dmg")
     crit_rate = min(0.1 + sum_type("crit_rate"), 1.0)
@@ -128,12 +133,10 @@ def compute_hit_damage(hit, base_atk, total_atk, buffs, enemy_number, boss_defen
         power = power[attacker_totsu]
     raw_target = hit["target"]
     target = enemy_number if raw_target == -1 else min(raw_target, enemy_number)
-
     if scale == "less":
         multiplier = power * (5 - enemy_number)
     else:
         multiplier = power
-
     boss_dmg = calculate_damage(multiplier, base_atk, total_atk, boss_defence * buffs["def_debuff"], buffs["dmg_dealt_boss"], buffs["dmg_taken"], 0, buffs["ele_advantage_dmg"], boss_break)
     if target <= 1:
         return boss_dmg, 0, 1, scale
@@ -149,45 +152,38 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
     all_bd += support_ability_bds
     if weapon:
         all_bd += get_weapon_bds(weapon, attacker_element)
-
-    buffs = collect_buffs(all_bd, enemy_number, boss_break, enemy_break)
+    attacker_role = attacker.get("role", "")
+    buffs = collect_buffs(all_bd, enemy_number, boss_break, enemy_break, attacker_element, attacker_role)
     weapon_atk = weapon["atk"] if weapon else 0
     base_atk = attacker_base_atk + weapon_atk
     total_atk = base_atk * buffs["atk_multiplier"]
     crit_rate = buffs["crit_rate"]
     crit_dmg = buffs["crit_dmg"]
     crit_factor = crit_dmg * crit_rate + (1 - crit_rate)
-
     hits = attacker["ultimate"][0]["meta"]["hits"]
     total_expected = 0
     total_theory = 0
     theory_prob = 1.0
-
     for hit in hits:
         scale = hit.get("scale")
         count = hit.get("count", 1)
         boss_dmg, enemy_dmg, target, _ = compute_hit_damage(hit, base_atk, total_atk, buffs, enemy_number, boss_defence, enemy_defence, boss_break, enemy_break, attacker_totsu)
-
         if scale == "random":
-            count = hit.get("count", 1)
             if enemy_number > 1:
                 expected_per_hit = boss_dmg * (1/enemy_number) + enemy_dmg * ((enemy_number-1)/enemy_number)
-                total_expected += expected_per_hit * crit_factor
-                
+                total_expected += expected_per_hit * crit_factor * count
                 if boss_dmg > enemy_dmg:
-                    total_theory += boss_dmg * crit_dmg
+                    total_theory += boss_dmg * crit_dmg * count
                     theory_prob *= (crit_rate / enemy_number) ** count
-                    
                 elif enemy_dmg > boss_dmg:
-                    total_theory += enemy_dmg * crit_dmg
+                    total_theory += enemy_dmg * crit_dmg * count
                     theory_prob *= (crit_rate * (enemy_number - 1) / enemy_number) ** count
-                    
                 else:
-                    total_theory += boss_dmg * crit_dmg
+                    total_theory += boss_dmg * crit_dmg * count
                     theory_prob *= crit_rate ** count
             else:
-                total_expected += boss_dmg * crit_factor
-                total_theory += boss_dmg * crit_dmg
+                total_expected += boss_dmg * crit_factor * count
+                total_theory += boss_dmg * crit_dmg * count
                 theory_prob *= crit_rate ** count
         else:
             total_expected += boss_dmg * crit_factor + enemy_dmg * crit_factor * (target - 1)
@@ -197,8 +193,8 @@ def compute_expected_damage(attacker, attacker_totsu, attacker_base_atk, support
                 theory_prob *= crit_rate ** (extra * enemy_number) if extra > 0 else 1.0
             else:
                 theory_prob *= crit_rate ** target
-
     return total_expected, total_theory, theory_prob
+
 
 roster = load_characters("characters.json")
 weapons = load_weapons("weapons.json")
@@ -232,6 +228,9 @@ if "pending_load" in st.session_state:
                 st.session_state[f"atk_{name}"] = data.get("base_atk", 0)
     st.success("ロードしました!")
 
+ALL_ELEMENTS = ["fire", "water", "wood", "light", "dark", "void"]
+ALL_ROLES = ["attacker", "buffer", "debuffer"]
+
 with st.sidebar:
     if st.button("キャッシュクリア"):
         st.cache_data.clear()
@@ -248,10 +247,29 @@ with st.sidebar:
         enemy_break = 0
         enemy_defence = 0.0
     sort_by = st.radio("ソート:ランキングの基準", ["期待値", "理論値"], horizontal=True)
-    if sort_by == "理論値":
-        min_prob = st.number_input("フィルター:理論値が起こり得る最低確率 (%)", min_value=0.0, max_value=100.0, value=0.0) / 100
-    else:
-        min_prob = 0.0
+    min_prob = st.number_input("フィルター:理論値が起こり得る最低確率 (%)", min_value=0.0, max_value=100.0, value=0.0) / 100
+
+    st.subheader("計算対象フィルター")
+
+    st.markdown("**属性**")
+    element_filter = {}
+    for ele in ALL_ELEMENTS:
+        element_filter[ele] = st.checkbox(ele, value=True, key=f"ele_{ele}")
+
+    st.markdown("**ロール**")
+    role_filter = {}
+    for role in ALL_ROLES:
+        role_filter[role] = st.checkbox(role, value=True, key=f"role_{role}")
+
+    st.markdown("**キャラクター個別**")
+    chara_filter = {}
+    for name, c in roster.items():
+        ele = c.get("element", "")
+        role = c.get("role", "")
+        if element_filter.get(ele, True) and role_filter.get(role, True):
+            chara_filter[name] = st.checkbox(name, value=True, key=f"chara_{name}")
+        else:
+            chara_filter[name] = False
 
 tab1, tab2, tab3, tab4 = st.tabs(["魔法少女登録", "ダメージシミュレーター", "セーブ・ロード", "使い方・よくある質問"])
 
@@ -282,11 +300,18 @@ with tab1:
 
 with tab2:
     st.header("ダメージシミュレーター")
-    registered_attackers = {n: v for n, v in st.session_state.registered.items() if v["role"] == "attacker"}
-    registered_supporters = {n: v for n, v in st.session_state.registered.items() if v["role"] == "supporter"}
+
+    registered_attackers = {
+        n: v for n, v in st.session_state.registered.items()
+        if v["role"] == "attacker" and chara_filter.get(n, True)
+    }
+    registered_supporters = {
+        n: v for n, v in st.session_state.registered.items()
+        if v["role"] == "supporter" and chara_filter.get(n, True)
+    }
 
     if not registered_attackers:
-        st.warning("タブ1でアタッカーを登録してください。")
+        st.warning("タブ①でアタッカーを登録してください。")
 
     results = []
     supporter_names = list(registered_supporters.keys())
@@ -308,7 +333,7 @@ with tab2:
             supporter_totsus = [registered_supporters[n]["totsu"] for n in combo]
             sa_candidates_names = [
                 n for n in roster
-                if n not in party_names and any(
+                if n not in party_names and chara_filter.get(n, True) and any(
                     sa.get("condition") in (attacker_element, attacker_role)
                     for sa in roster[n].get("support_abilities", [])
                 )
