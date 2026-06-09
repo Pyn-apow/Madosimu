@@ -294,15 +294,26 @@ with tab2:
         for role in ALL_ROLES:
             role_filter[role] = st.checkbox(role, value=True, key=f"role_{role}")
 
-        chara_filter = {}
-        st.markdown("魔法少女")
+        prev_ele = st.session_state.get("_prev_ele_filter", {})
+        prev_role = st.session_state.get("_prev_role_filter", {})
+
         for name, c in roster.items():
             ele = c.get("element", "")
             role = c.get("role", "")
-            default = element_filter.get(ele, True) and role_filter.get(role, True)
-            if not default and st.session_state.get(f"chara_{name}", True):
-                st.session_state[f"chara_{name}"] = False
-            chara_filter[name] = st.checkbox(name, value=default, key=f"chara_{name}")
+            ele_changed = element_filter.get(ele) != prev_ele.get(ele)
+            role_changed = role_filter.get(role) != prev_role.get(role)
+            if ele_changed or role_changed:
+                st.session_state[f"chara_{name}"] = (
+                    element_filter.get(ele, True) and role_filter.get(role, True)
+                )
+
+        st.session_state["_prev_ele_filter"] = dict(element_filter)
+        st.session_state["_prev_role_filter"] = dict(role_filter)
+
+        chara_filter = {}
+        st.markdown("魔法少女")
+        for name in roster:
+            chara_filter[name] = st.checkbox(name, key=f"chara_{name}")
 
     with col_result:
         registered_attackers = {
